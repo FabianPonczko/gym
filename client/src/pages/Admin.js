@@ -1,6 +1,7 @@
 import {  useEffect,useState } from "react";
 import api from "./services/api";
 import Layout from "../components/Layout";
+import ProgressChart from "../components/ProgressChart";
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
@@ -21,6 +22,9 @@ export default function Admin() {
 
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedRoutine, setSelectedRoutine] = useState("");
+  
+  const [selectedUserProgress, setSelectedUserProgress] = useState([]);
+  const [selectedUserName, setSelectedUserName] = useState("");
 
    useEffect(() => {
     fetchUsers()
@@ -47,6 +51,22 @@ export default function Admin() {
     const res = await api.get("/routines");
     setRoutines(res.data);
   };
+  
+  //trae progreso
+  const fetchUserProgress = async (userId, name) => {
+  try {
+    const res = await api.get(`/progress/user/${userId}`);
+    setSelectedUserProgress(res.data);
+    setSelectedUserName(name);
+  } catch (err) {
+    console.log(err);
+  }
+};
+  const grouped = selectedUserProgress.reduce((acc, p) => {
+    if (!acc[p.exercise]) acc[p.exercise] = [];
+    acc[p.exercise].push(p);
+    return acc;
+  }, {});
  
   // 👤 CREAR USUARIO
   const createUser = async () => {
@@ -182,9 +202,30 @@ export default function Admin() {
       {users.map(u => (
         <div key={u._id}>
           {u.name} - {u.email} → {u.routine?.name || "Sin rutina"}
+           
+           <button onClick={() => fetchUserProgress(u._id, u.name)}>
+              Ver progreso
+            </button>
         </div>
       ))}
-
+      {selectedUserProgress.length > 0 && (
+        <div className="card">
+        <h2>Progreso de {selectedUserName}</h2>
+    {/* {selectedUserProgress.map((p, i) => (
+      <p key={i}>
+      {p.exercise} - {p.weight}kg x {p.reps} 
+      ({new Date(p.date).toLocaleDateString()})
+      </p>
+      ))} */}
+      {Object.keys(grouped).map((exercise) => (
+  <div className="card" key={exercise}>
+    <h3>{exercise}</h3>
+    <ProgressChart data={grouped[exercise]} />
+  </div>
+))}
+     
+  </div>
+)}
     </div>
       </Layout>
   );
