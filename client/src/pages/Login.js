@@ -1,14 +1,19 @@
 import { useState } from "react";
-import api from "../services/api";
+import api from "./services/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    const res = await api.post("/auth/login", { email, password });
-    localStorage.setItem("token", res.data.token);
-    console.log(res.data);
+    try{
+      const res = await api.post("/auth/login", { email, password });
+      localStorage.setItem("token", res.data.token);
+      console.log(res.data);
+      window.location.href = "/dashboard";
+    }catch(err){
+      alert(err.response?.data || "Error");
+    }
   };
 
   return (

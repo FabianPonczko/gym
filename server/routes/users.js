@@ -1,5 +1,5 @@
 import express from "express";
-import { assignRoutine } from "../controllers/userController.js";
+import { assignRoutine ,getMyRoutine} from "../controllers/userController.js";
 import { verifyToken, isAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
