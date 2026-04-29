@@ -1,0 +1,31 @@
+.sidebar {
+  width: 220px;
+  background: #020617;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+}
+
+.sidebar a {
+  color: #94a3b8;
+  margin-bottom: 10px;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: #38bdf8;
+}
+
+.sidebar button {
+  margin-top: auto;
+  padding: 10px;
+  background: #ef4444;
+  border: none;
+  color: white;
+  cursor: pointer;
+}

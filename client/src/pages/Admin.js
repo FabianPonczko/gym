@@ -1,5 +1,6 @@
 import {  useEffect,useState } from "react";
 import api from "./services/api";
+import Layout from "../components/Layout";
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
@@ -8,7 +9,8 @@ export default function Admin() {
   const [userForm, setUserForm] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
+    role:""
   });
 
   const [routineForm, setRoutineForm] = useState({
@@ -51,7 +53,7 @@ export default function Admin() {
     try {
       await api.post("/auth/register", userForm);
       alert("Usuario creado ✅");
-      setUserForm({ name: "", email: "", password: "" });
+      setUserForm({ name: "", email: "", password: "" ,role:""});
       fetchUsers();
     } catch (err) {
       alert("Error al crear usuario");
@@ -98,6 +100,9 @@ export default function Admin() {
    
 
   return (
+
+    <Layout>
+
     <div style={{ padding: 20 }}>
       <h1>Panel Admin</h1>
 
@@ -107,7 +112,7 @@ export default function Admin() {
         placeholder="Nombre"
         value={userForm.name}
         onChange={e => setUserForm({ ...userForm, name: e.target.value })}
-      />
+        />
       <input
         placeholder="Email"
         value={userForm.email}
@@ -118,7 +123,13 @@ export default function Admin() {
         placeholder="Password"
         value={userForm.password}
         onChange={e => setUserForm({ ...userForm, password: e.target.value })}
-      />
+        />
+        <input
+        type="text"
+        placeholder="client, coach"
+        value={userForm.role}
+        onChange={e => setUserForm({ ...userForm, role: e.target.value })}
+        />
       <button onClick={createUser}>Crear</button>
 
       <hr />
@@ -129,12 +140,12 @@ export default function Admin() {
         placeholder="Nombre rutina"
         value={routineForm.name}
         onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })}
-      />
+        />
       <input
         placeholder="Descripción"
         value={routineForm.description}
         onChange={e => setRoutineForm({ ...routineForm, description: e.target.value })}
-      />
+        />
       <input
         placeholder="Ejercicios (ej: pecho, espalda, piernas)"
         value={routineForm.exercises}
@@ -175,5 +186,6 @@ export default function Admin() {
       ))}
 
     </div>
+      </Layout>
   );
 }

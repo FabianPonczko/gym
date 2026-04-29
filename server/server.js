@@ -29,6 +29,8 @@ app.use("/api/progress", progressRoutes);
 
 app.use("/api/users", userRoutes);
 
+app.use("/api/progress", progressRoutes);
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Mongo conectado");
