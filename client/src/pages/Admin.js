@@ -1,10 +1,9 @@
-import {  useState } from "react";
+import {  useEffect,useState } from "react";
 import api from "./services/api";
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
   const [routines, setRoutines] = useState([]);
-
 
   const [userForm, setUserForm] = useState({
     name: "",
@@ -21,8 +20,10 @@ export default function Admin() {
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedRoutine, setSelectedRoutine] = useState("");
 
-
- 
+   useEffect(() => {
+    fetchUsers()
+    fetchRoutines()
+  }, []);
 
   // 🔐 protección básica
   let user = null;
@@ -34,8 +35,6 @@ export default function Admin() {
   if (!user || user.role !== "Admin") {
     return <h1>No autorizado</h1>;
   }
-
-  
 
   const fetchUsers = async () => {
     const res = await api.get("/users");
@@ -83,6 +82,7 @@ export default function Admin() {
   };
 
   // 🔗 ASIGNAR
+
   const assignRoutine = async () => {
     if (!selectedUser || !selectedRoutine) return;
 
@@ -91,10 +91,12 @@ export default function Admin() {
       routineId: selectedRoutine
     });
 
-    alert("Asignado ✅");
+    alert("Rutina asignada ✅");
     fetchUsers();
   };
- 
+
+   
+
   return (
     <div style={{ padding: 20 }}>
       <h1>Panel Admin</h1>
@@ -153,6 +155,7 @@ export default function Admin() {
       </select>
 
       <select onChange={(e) => setSelectedRoutine(e.target.value)}>
+
         <option value="">Rutina</option>
         {routines.map(r => (
           <option key={r._id} value={r._id}>{r.name}</option>
@@ -170,6 +173,7 @@ export default function Admin() {
           {u.name} - {u.email} → {u.routine?.name || "Sin rutina"}
         </div>
       ))}
+
     </div>
   );
 }

@@ -14,6 +14,6 @@ export const addProgress = async (req, res) => {
 };
 
 export const getMyProgress = async (req, res) => {
-  const data = await Progress.find({ user: req.user.id });
+  const data = await Progress.findById(req.user.id);
   res.json(data);
 };

@@ -56,3 +56,7 @@ body {
 .card button:hover {
   background: #0ea5e9;
 }
+select, button {
+  margin: 5px;
+  padding: 8px;
+}

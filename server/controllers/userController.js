@@ -19,3 +19,8 @@ export const getMyRoutine = async (req, res) => {
   const user = await User.findById(req.user.id).populate("routine");
   res.json(user.routine);
 };
+
+export const getAllUser = async (req, res) => {
+  const user = await User.find().populate("routine")
+  res.json(user);
+};
