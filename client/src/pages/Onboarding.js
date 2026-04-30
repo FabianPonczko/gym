@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "./services/api";
-import "./login.css";
+import "./onboarding.css";
 
 export default function Onboarding() {
   const [goal, setGoal] = useState("hypertrophy");
@@ -21,17 +21,27 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
+    <div className="onboarding-container">
+      <div className="onboarding-card">
 
         <h1>Configurá tu entrenamiento</h1>
 
         <label>Objetivo</label>
-        <select onChange={(e) => setGoal(e.target.value)}>
-          <option value="strength">Fuerza</option>
-          <option value="hypertrophy">Hipertrofia</option>
-          <option value="weight_loss">Bajar peso</option>
-        </select>
+<div className="options-grid">
+  {[
+    { label: "Fuerza", value: "strength" },
+    { label: "Hipertrofia", value: "hypertrophy" },
+    { label: "Definir", value: "weight_loss" }
+  ].map(opt => (
+    <div
+      key={opt.value}
+      className={`option ${goal === opt.value ? "active" : ""}`}
+      onClick={() => setGoal(opt.value)}
+    >
+      {opt.label}
+    </div>
+  ))}
+</div>
 
         <label>Nivel</label>
         <select onChange={(e) => setLevel(e.target.value)}>
@@ -47,8 +57,8 @@ export default function Onboarding() {
           onChange={(e) => setDays(e.target.value)}
         />
 
-        <button onClick={handleSave}>
-          Guardar y comenzar 🚀
+        <button className="onboarding-btn" onClick={handleSave}>
+           Guardar y comenzar 🚀
         </button>
 
       </div>

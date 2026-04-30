@@ -36,28 +36,36 @@ export const adjustRoutine = async (req, res) => {
       // =========================
       // 🧠 1. PROGRESO REAL
       // =========================
+      let improved = false;
+      let fatigued = false;
+
       if (history.length > 0) {
         const avgReps =
           history.reduce((acc, h) => acc + h.reps, 0) / history.length;
 
-        // progreso
         if (avgReps >= ex.reps) {
-          newWeight += 2.5;
+          improved = true;
         }
 
-        // fatiga
         if (avgReps < ex.reps - 3) {
-          newWeight -= 2.5;
-          newSets = Math.max(2, newSets - 1);
+          fatigued = true;
         }
       }
+      if (improved) {
+        newWeight += 2.5;
+      }
 
+      if (fatigued) {
+        newWeight -= 2.5;
+        newSets = Math.max(2, newSets - 1);
+      }
       // =========================
       // 🎯 2. OBJETIVO
       // =========================
       if (goal === "strength") {
-        newWeight += 5;
         newReps = 5;
+         // SOLO si mejora
+        if (improved) newWeight += 2.5;
       }
 
       if (goal === "hypertrophy") {
@@ -74,7 +82,6 @@ export const adjustRoutine = async (req, res) => {
       // =========================
       if (level === "beginner") {
         newSets = 3;
-        newWeight = Math.max(5, newWeight - 2.5);
       }
 
       if (level === "intermediate") {
@@ -83,7 +90,12 @@ export const adjustRoutine = async (req, res) => {
 
       if (level === "advanced") {
         newSets = 5;
-        newWeight += 2.5;
+      }
+
+      // control de estancamiento:
+      if (!improved && history.length >= 3) {
+        // estancado → cambiar reps en vez de peso
+        newReps += 1;
       }
 
       // =========================
