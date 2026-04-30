@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "./services/api";
 import Layout from "../components/Layout";
 import ProgressChart from "../components/ProgressChart";
+import "./coach.css";
 
 export default function Coach() {
   const [clients, setClients] = useState([]);
@@ -56,7 +57,12 @@ useEffect(() => {
 
   const fetchClients = async () => {
     const res = await api.get("/users");
-    setClients(res.data);
+      const onlyClients = res.data.filter(u => u.role === "client");
+      setClients(onlyClients);
+      
+   
+    
+    
   };
 
   const fetchRoutines = async () => {
@@ -99,80 +105,106 @@ useEffect(() => {
  
 
   return (
-    <Layout>
-            <div style={{ padding: 20 }}>
-            <h1>Panel Coach</h1>
+  <Layout>
+    <div className="coach-container">
 
-            {/* 👥 CLIENTES */}
-            <h2>Mis Clientes</h2>
-            {clients.map(c => (
-                <div key={c._id}>
-                {c.name} → {c.routine?.name || "Sin rutina"}
-                <button onClick={() => fetchClientProgress(c._id)}>
-                  Ver progreso
-                </button>
-                
-                </div>
-                
-            ))}
-            {selectedClientProgress.length > 0 && (
-                <div>
-                  <h3>Progreso</h3>
-                  {selectedClientProgress.map((p, i) => (
-                    <p key={i}>
-                      {p.exercise} - {p.weight}kg x {p.reps}
-                    </p>
-                  ))}
-                  {Object.keys(grouped).map((exercise) => (
-                  <div className="card" key={exercise}>
-                    <h3>{exercise}</h3>
-                    <ProgressChart data={grouped[exercise].sort((a, b) => new Date(a.date) - new Date(b.date))} />
-                  </div>
-                  ))}
-                </div>
-              )}
-            <hr />
+      {/* 👥 CLIENTES */}
+      <div className="coach-sidebar">
+        <h2>Clientes</h2>
 
-            {/* 🏋️ CREAR RUTINA */}
-            <h2>Crear Rutina</h2>
-            <input
+        {clients.map(c => (
+          <div
+            key={c._id}
+            className={`client-item ${selectedClientName === c.name ? "active" : ""}`}
+            onClick={() => fetchClientProgress(c._id, c.name)}
+          >
+            <div className="avatar">
+              {c.name.charAt(0)}
+            </div>
+
+            <div>
+              <div className="name">{c.name}</div>
+              <div className="routine">
+                {c.routine?.name || "Sin rutina"}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 📊 CONTENIDO */}
+      <div className="coach-content">
+
+        {!selectedClientName ? (
+          <h2>Seleccioná un cliente</h2>
+        ) : (
+          <>
+            <div className="coach-header">
+              <h2>{selectedClientName}</h2>
+            </div>
+
+            {/* GRÁFICOS */}
+            <div className="grid">
+              {Object.keys(grouped).map((exercise) => (
+                <div className="card" key={exercise}>
+                  <h3>{exercise}</h3>
+                  <ProgressChart
+                    data={grouped[exercise].sort(
+                      (a, b) => new Date(a.date) - new Date(b.date)
+                    )}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* CREAR RUTINA */}
+            <div className="card">
+              <h3>Crear rutina</h3>
+
+              <input
                 placeholder="Nombre"
                 value={routineForm.name}
                 onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })}
-                />
-            <input
+              />
+              <input
                 placeholder="Descripción"
                 value={routineForm.description}
                 onChange={e => setRoutineForm({ ...routineForm, description: e.target.value })}
-            />
-            <input
-                placeholder="Ejercicios (ej: pecho, espalda, piernas)"
+              />
+              <input
+                placeholder="Ejercicios (pecho, espalda...)"
                 value={routineForm.exercises}
                 onChange={e => setRoutineForm({ ...routineForm, exercises: e.target.value })}
-                />
-            <button onClick={createRoutine}>Crear rutina</button>
+              />
 
-            <hr />
+              <button onClick={createRoutine}>Crear rutina</button>
+            </div>
 
-            {/* 🔗 ASIGNAR */}
-            <h2>Asignar Rutina</h2>
+            {/* ASIGNAR */}
+            <div className="card">
+              <h3>Asignar rutina</h3>
 
-            <select onChange={(e) => setSelectedClient(e.target.value)}>
+              <select onChange={(e) => setSelectedClient(e.target.value)}>
                 <option value="">Cliente</option>
                 {clients.map(c => (
-                    <option key={c._id} value={c._id}>{c.name}</option>
+                  <option key={c._id} value={c._id}>{c.name}</option>
                 ))}
-            </select>
+              </select>
 
-            <select onChange={(e) => setSelectedRoutine(e.target.value)}>
+              <select onChange={(e) => setSelectedRoutine(e.target.value)}>
                 <option value="">Rutina</option>
                 {routines.map(r => (
-                <option key={r._id} value={r._id}>{r.name}</option>
+                  <option key={r._id} value={r._id}>{r.name}</option>
                 ))}
-            </select>
+              </select>
 
-            <button onClick={assignRoutine}>Asignar</button>
+              <button onClick={assignRoutine}>Asignar</button>
             </div>
-        </Layout>
-  );
+          </>
+        )}
+
+      </div>
+    </div>
+  </Layout>
+);
 }
