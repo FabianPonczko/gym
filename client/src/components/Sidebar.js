@@ -15,7 +15,7 @@ export default function Sidebar() {
 
       <Link to="/dashboard">Dashboard</Link>
 
-      {user?.role === "admin" && (
+      {user?.role === "Admin" && (
         <Link to="/admin">Admin</Link>
       )}
 

@@ -19,18 +19,25 @@ body {
   color: #38bdf8;
 }
 
-.grid {
+/* .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   margin-top: 20px;
+} */
+ 
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  align-items: start; /* 👈 clave */
 }
 
 .card {
-  background: #1e293b;
+  background: #213323;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 5px 15px rgba(17, 16, 7, 0.3);
   transition: 0.2s;
 }
 
@@ -47,7 +54,7 @@ body {
   padding: 10px;
   border: none;
   background: #38bdf8;
-  color: black;
+  color: rgb(156, 9, 9);
   border-radius: 8px;
   cursor: pointer;
   width: 100%;
@@ -75,7 +82,7 @@ select, button {
 
 /* estado ver */
 .btn-rec.show {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #38bdf8);
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
 

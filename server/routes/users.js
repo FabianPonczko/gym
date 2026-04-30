@@ -8,8 +8,12 @@ const router = express.Router();
 
 router.put("/assign-routine", verifyToken,  assignRoutine);
 router.get("/my-routine", verifyToken, getMyRoutine);
-  router.get("/", verifyToken, getAllUser);
-// router.get("/", verifyToken, getUsers);
+router.get("/", verifyToken, getAllUser);
+
+router.get("/me", verifyToken, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  res.json(user);
+});
 
 router.put("/onboarding", verifyToken, async (req, res) => {
   const user = await User.findById(req.user.id);
@@ -23,4 +27,14 @@ router.put("/onboarding", verifyToken, async (req, res) => {
 
   res.json(user);
 });
+
+router.delete("/:id", verifyToken, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "Usuario eliminado" });
+  } catch (err) {
+    res.status(500).json("Error al eliminar");
+  }
+});
+
 export default router;

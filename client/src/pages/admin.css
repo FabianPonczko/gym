@@ -1,0 +1,285 @@
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+/* ===== LAYOUT ===== */
+.admin-container {
+  display: flex;
+  height: 100vh;
+  background: #020617;
+  color: white;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebarAdmin {
+  width: 200px;
+  height: 100vh;
+  background: #0f172a;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #1e293b;
+}
+
+.sidebar h2 {
+  margin-bottom: 25px;
+}
+
+.sidebarAdmin button {
+  background: rgb(6, 5, 24);
+  border: none;
+  color: #94a3b8;
+  padding: 20%;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  transition: 0.2s;
+}
+
+.sidebarAdmin button:hover {
+  background: #38bdf8;
+  color: white;
+}
+
+.sidebarAdmin .active {
+  background: #38bdf8;
+  color: white
+}
+
+/* ===== CONTENT ===== */
+.content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+/* ===== INPUTS ===== */
+.card input,
+.card select,
+.search {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #020617;
+  color: white;
+}
+
+.card input:focus,
+.card select:focus {
+  outline: 2px solid #38bdf8;
+}
+
+/* ===== BUTTONS GENERALES ===== */
+.card button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  color: white;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.card button:hover {
+  transform: scale(1.05);
+}
+
+/* ===== TABLE ===== */
+
+
+.table-pro {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-pro thead {
+  background: #0f172a;
+}
+
+.table-pro th {
+  padding: 14px;
+  text-align: left;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.table-pro td {
+  padding: 14px;
+  border-top: 1px solid #0f172a;
+}
+
+.table-pro tr:hover {
+  background: #020617;
+}
+
+/* ===== USER CELL ===== */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-card {
+    background: #151d2b;
+    padding: 15px;
+    border-radius: 14px;
+    margin-bottom: 15px;
+  }
+
+.user-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #38bdf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.email {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* ===== BADGES ===== */
+.badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.badge.client {
+  background: #22c55e20;
+  color: #22c55e;
+}
+
+.badge.coach {
+  background: #eab30820;
+  color: #eab308;
+}
+
+.badge.admin {
+  background: #ef444420;
+  color: #ef4444;
+}
+
+/* ===== ACTIONS ===== */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 140px;
+}
+
+/* ===== BOTONES DE ACCIÓN ===== */
+.btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 📊 */
+.action-view {
+  background: #38bdf8;
+  color: black;
+}
+
+.action-view:hover {
+  background: #0ea5e9;
+}
+
+/* 🗑️ */
+.action-delete {
+  background: #ef4444;
+  color: white;
+}
+
+.action-delete:hover {
+  background: #dc2626;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 16px;
+  width: 320px;
+}
+
+/* ===== SCROLL ===== */
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 10px;
+}
+
+/* ===== TEXT ===== */
+.muted {
+  color: #64748b;
+}
+
+.text-right {
+  text-align: right;
+}
+.table-wrapper {
+  overflow-x: auto;
+}
+.table-pro {
+  width: 100%;
+  min-width: 700px; /* 👈 CLAVE */
+}
+.table-pro th,
+.table-pro td {
+  white-space: nowrap;
+}
+.table-pro td:nth-child(1) { min-width: 220px; }
+.table-pro td:nth-child(2) { min-width: 120px; }
+.table-pro td:nth-child(3) { min-width: 180px; }
+.table-pro td:nth-child(4) { min-width: 180px; }
+/* ===== RESPONSIVE ===== */

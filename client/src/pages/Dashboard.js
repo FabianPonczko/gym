@@ -114,9 +114,9 @@ const adjustRoutine = async () => {
                   </button>
                   <button onClick={() => fetchHistory(ex.name)}
                      className={`btn-rec ${
-                       history[ex.name] ? "hide" : "show"
+                       history[ex.name]  ? "hide" : "show"
                       }`}>
-                        {history[ex.name] ? "❌ Ocultar historial" : "💡 Ver historial"}
+                        {history[ex.name]  ? "❌ Ocultar historial" : "💡 Ver historial"}
                        </button>
                   {history[ex.name]?.map((h, i) => (
                     <p key={i}>

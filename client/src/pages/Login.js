@@ -15,48 +15,45 @@ export default function Login() {
   useEffect(() => {
     const user = getUserFromToken();
     if (user) {
-      if (user.role === "admin") navigate("/admin");
-      else if (user.role === "coach") navigate("/coach");
-      else navigate("/dashboard");
+        if (user.role === "Admin") {
+        navigate("/admin");
+      } else if (user.role === "coach") {
+        navigate("/coach");
+      } else if (!user.onboardingCompleted) {
+        navigate("/onboarding");
+      } else {
+        navigate("/dashboard");
+      }
     }
   }, [navigate]);
 
   const handleLogin = async () => {
-    setError("");
+  try {
+    const res = await api.post("/auth/login", {
+      email,
+      password
+    });
 
-    if (!email || !password) {
-      return setError("Completá todos los campos");
+    localStorage.setItem("token", res.data.token);
+
+    // 🔥 traer usuario real desde DB
+    const resUser = await api.get("/users/me");
+    const user = resUser.data;
+
+    if (user.role === "Admin") {
+      navigate("/admin");
+    } else if (user.role === "coach") {
+      navigate("/coach");
+    } else if (!user.onboardingCompleted) {
+      navigate("/onboarding");
+    } else {
+      navigate("/dashboard");
     }
 
-    try {
-      setLoading(true);
-
-      const res = await api.post("/auth/login", { email, password });
-
-      localStorage.setItem("token", res.data.token);
-
-      const user = getUserFromToken();
-
-if (!user.onboardingCompleted) {
-  navigate("/onboarding");
-} else if (user.role === "admin") {
-  navigate("/admin");
-} else if (user.role === "coach") {
-  navigate("/coach");
-} else {
-  navigate("/dashboard");
-}
-      // if (user.role === "admin") navigate("/admin");
-      // else if (user.role === "coach") navigate("/coach");
-      // else navigate("/dashboard");
-
-    } catch (err) {
-      setError("Email o contraseña incorrectos");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  } catch {
+    alert("Error login");
+  }
+};
 
 
   return (

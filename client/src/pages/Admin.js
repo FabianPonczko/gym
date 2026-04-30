@@ -2,12 +2,17 @@ import {  useEffect,useState } from "react";
 import api from "./services/api";
 import Layout from "../components/Layout";
 import ProgressChart from "../components/ProgressChart";
+import "./admin.css";
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [search, setSearch] = useState("");
   const [routines, setRoutines] = useState([]);
-
+  const [tab, setTab] = useState("users");
+  const [editingUser, setEditingUser] = useState(null);
   const [userForm, setUserForm] = useState({
+    
     name: "",
     email: "",
     password: "",
@@ -30,6 +35,7 @@ export default function Admin() {
     fetchUsers()
     fetchRoutines()
   }, []);
+ 
 
   // 🔐 protección básica
   let user = null;
@@ -45,6 +51,7 @@ export default function Admin() {
   const fetchUsers = async () => {
     const res = await api.get("/users");
     setUsers(res.data);
+    setFilteredUsers(res.data); // 🔥 importante
   };
 
   const fetchRoutines = async () => {
@@ -117,116 +124,208 @@ export default function Admin() {
     fetchUsers();
   };
 
+  const deleteUser = async (id) => {
+  if (!window.confirm("¿Eliminar usuario?" + id)) return;
+
+  await api.delete(`/users/${id}`);
+  fetchUsers();
+};
    
 
+
   return (
+  <Layout>
+    <div className="admin-container">
 
-    <Layout>
+      {/* SIDEBAR */}
+      <div className="sidebarAdmin">
+        <h2>🏋️ Admin</h2>
 
-    <div style={{ padding: 20 }}>
-      <h1>Panel Admin</h1>
+        <button onClick={() => setTab("users")} className={tab==="users" ? "active" : ""}>
+          👤 Usuarios
+        </button>
 
-      {/* 👤 CREAR USUARIO */}
-      <h2>Crear Usuario</h2>
-      <input
-        placeholder="Nombre"
-        value={userForm.name}
-        onChange={e => setUserForm({ ...userForm, name: e.target.value })}
-        />
-      <input
-        placeholder="Email"
-        value={userForm.email}
-        onChange={e => setUserForm({ ...userForm, email: e.target.value })}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={userForm.password}
-        onChange={e => setUserForm({ ...userForm, password: e.target.value })}
-        />
-        <input
-        type="text"
-        placeholder="client, coach"
-        value={userForm.role}
-        onChange={e => setUserForm({ ...userForm, role: e.target.value })}
-        />
-      <button onClick={createUser}>Crear</button>
+        <button onClick={() => setTab("routines")} className={tab==="routines" ? "active" : ""}>
+          🏋️ Rutinas
+        </button>
 
-      <hr />
+        <button onClick={() => setTab("assign")} className={tab==="assign" ? "active" : ""}>
+          🔗 Asignar
+        </button>
+      </div>
 
-      {/* 🏋️ CREAR RUTINA */}
-      <h2>Crear Rutina</h2>
-      <input
-        placeholder="Nombre rutina"
-        value={routineForm.name}
-        onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })}
-        />
-      <input
-        placeholder="Descripción"
-        value={routineForm.description}
-        onChange={e => setRoutineForm({ ...routineForm, description: e.target.value })}
-        />
-      <input
-        placeholder="Ejercicios (ej: pecho, espalda, piernas)"
-        value={routineForm.exercises}
-        onChange={e => setRoutineForm({ ...routineForm, exercises: e.target.value })}
-      />
-      <button onClick={createRoutine}>Crear rutina</button>
+      {/* CONTENT */}
+      <div className="content">
 
-      <hr />
+        {/* 👤 USUARIOS */}
+        {tab === "users" && (
+          <div className="card">
+            <h2>Crear Usuario</h2>
 
-      {/* 🔗 ASIGNAR */}
-      <h2>Asignar Rutina</h2>
+            <input placeholder="Nombre" value={userForm.name}
+              onChange={e => setUserForm({ ...userForm, name: e.target.value })} />
 
-      <select onChange={(e) => setSelectedUser(e.target.value)}>
-        <option value="">Usuario</option>
-        {users.map(u => (
-          <option key={u._id} value={u._id}>{u.name}</option>
-        ))}
-      </select>
+            <input placeholder="Email" value={userForm.email}
+              onChange={e => setUserForm({ ...userForm, email: e.target.value })} />
 
-      <select onChange={(e) => setSelectedRoutine(e.target.value)}>
+            <input type="password" placeholder="Password" value={userForm.password}
+              onChange={e => setUserForm({ ...userForm, password: e.target.value })} />
 
-        <option value="">Rutina</option>
-        {routines.map(r => (
-          <option key={r._id} value={r._id}>{r.name}</option>
-        ))}
-      </select>
+            <select value={userForm.role}
+              onChange={e => setUserForm({ ...userForm, role: e.target.value })}>
+              <option value="">Rol</option>
+              <option value="client">Cliente</option>
+              <option value="coach">Coach</option>
+              <option value="admin">Admin</option>
+            </select>
 
-      <button onClick={assignRoutine}>Asignar</button>
+            <button onClick={createUser}>Crear</button>
 
-      <hr />
+            <h2 style={{marginTop:20}}>Lista de usuarios</h2>
 
-      {/* 📋 LISTA */}
-      <h2>Usuarios</h2>
-      {users.map(u => (
-        <div key={u._id}>
-          {u.name} - {u.email} → {u.routine?.name || "Sin rutina"}
-           
-           <button onClick={() => fetchUserProgress(u._id, u.name)}>
-              Ver progreso
-            </button>
+            {/* {users.map(u => (
+              <div className="user-row" key={u._id}>
+                <span>{u.name} - {u.email}</span>
+                <span>{u.routine?.name || "Sin rutina"}</span>
+
+                <button onClick={() => fetchUserProgress(u._id, u.name)}>
+                  📊
+                </button>
+              </div>
+            ))} */}
+            <input
+              placeholder="Buscar usuario..."
+              className="search"
+              onChange={(e) => {
+                const value = e.target.value.toLowerCase();
+
+                if (!value) {
+                  setFilteredUsers(users); // 🔥 restaura lista
+                  return;
+                }
+
+                const filtered = users.filter(u =>
+                  u.name.toLowerCase().includes(value) ||
+                  u.email.toLowerCase().includes(value)
+                );
+
+                setFilteredUsers(filtered);
+              }}
+            />
+
+  {/* tabla de usuarios */}
+  <div className="table-wrapper">
+
+  
+
+  {/* 📱 MOBILE CARDS */}
+  <div className="mobile-only">
+    {filteredUsers.map(u => (
+      <div className="user-card" key={u._id}>
+        
+        <div className="user-header">
+          <div className="avatar">
+            {u.name.charAt(0).toUpperCase()}
+          </div>
+
+          <div>
+            <div className="name">{u.name}</div>
+            <div className="email">{u.email}</div>
+          </div>
         </div>
-      ))}
-      {selectedUserProgress.length > 0 && (
-        <div className="card">
-        <h2>Progreso de {selectedUserName}</h2>
-    {/* {selectedUserProgress.map((p, i) => (
-      <p key={i}>
-      {p.exercise} - {p.weight}kg x {p.reps} 
-      ({new Date(p.date).toLocaleDateString()})
-      </p>
-      ))} */}
-      {Object.keys(grouped).map((exercise) => (
-  <div className="card" key={exercise}>
-    <h3>{exercise}</h3>
-    <ProgressChart data={grouped[exercise]} />
+
+        <div className="user-info">
+          <span className={`badge ${u.role}`}>{u.role}</span>
+          <span className="muted">
+            {u.routine?.name || "Sin rutina"}
+          </span>
+        </div>
+
+        <div className="actions">
+          <button
+            className="btn action-view"
+            onClick={() => fetchUserProgress(u._id, u.name)}
+          >
+            📊 Ver métricas
+          </button>
+
+          <button
+            className="btn action-delete"
+            onClick={() => deleteUser(u._id)}
+          >
+            🗑️ Eliminar
+          </button>
+        </div>
+
+      </div>
+    ))}
   </div>
-))}
-     
-  </div>
-)}
+
+</div>
+
+          </div>
+        )}
+
+        {/* 🏋️ RUTINAS */}
+        {tab === "routines" && (
+          <div className="card">
+            <h2>Crear Rutina</h2>
+
+            <input placeholder="Nombre"
+              value={routineForm.name}
+              onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })} />
+
+            <input placeholder="Descripción"
+              value={routineForm.description}
+              onChange={e => setRoutineForm({ ...routineForm, description: e.target.value })} />
+
+            <input placeholder="Ejercicios (coma)"
+              value={routineForm.exercises}
+              onChange={e => setRoutineForm({ ...routineForm, exercises: e.target.value })} />
+
+            <button onClick={createRoutine}>Crear rutina</button>
+          </div>
+        )}
+
+        {/* 🔗 ASIGNAR */}
+        {tab === "assign" && (
+          <div className="card">
+            <h2>Asignar rutina</h2>
+
+            <select onChange={(e) => setSelectedUser(e.target.value)}>
+              <option value="">Usuario</option>
+              {users.map(u => (
+                <option key={u._id} value={u._id}>{u.name}</option>
+              ))}
+            </select>
+
+            <select onChange={(e) => setSelectedRoutine(e.target.value)}>
+              <option value="">Rutina</option>
+              {routines.map(r => (
+                <option key={r._id} value={r._id}>{r.name}</option>
+              ))}
+            </select>
+
+            <button onClick={assignRoutine}>Asignar</button>
+          </div>
+        )}
+
+        {/* 📊 PROGRESO */}
+        {selectedUserProgress.length > 0 && (
+          <div className="card">
+            <h2>Progreso de {selectedUserName}</h2>
+
+            {Object.keys(grouped).map((exercise) => (
+              <div key={exercise}>
+                <h3>{exercise}</h3>
+                <ProgressChart data={grouped[exercise]} />
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
     </div>
-      </Layout>
-  );
+  </Layout>
+);
 }
