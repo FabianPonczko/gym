@@ -7,7 +7,11 @@ const routineSchema = new mongoose.Schema({
     {
       name: String,
       sets: Number,
-      reps: Number
+      reps: Number,
+      weight: {
+      type: Number,
+      default: 10
+    }
     }
   ],
   createdBy: {

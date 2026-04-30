@@ -43,3 +43,14 @@
   border-radius: 12px;
   margin-top: 20px;
 }
+.rec-card {
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+
+.rec-card:hover {
+  transform: scale(1.02);
+}

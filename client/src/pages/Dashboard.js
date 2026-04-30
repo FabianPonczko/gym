@@ -3,11 +3,14 @@ import api from "./services/api";
 import "./dashboard.css";
 import WeightModal from "../components/WeightModal";
 import Layout from "../components/Layout"
+import RecommendationCard from "../components/RecommendationCard";
+
 
 export default function Dashboard() {
   const [routine, setRoutine] = useState(null);
   const [selectedExercise, setSelectedExercise] = useState(null);
- const [history, setHistory] = useState({}); 
+  const [history, setHistory] = useState({}); 
+  const [recommendations, setRecommendations] = useState({});
 
   useEffect(() => {
     const fetchRoutine = async () => {
@@ -28,23 +31,64 @@ export default function Dashboard() {
   };
 
   const fetchHistory = async (exercise) => {
-      const res = await api.get(`/progress/by-exercise?exercise=${exercise}`);
-
+      
+    
+    const res = await api.get(`/progress/by-exercise?exercise=${exercise}`);
+  if (history[exercise]) {
+      setHistory(prev => {
+        const copy = { ...prev };
+        delete copy[exercise];
+        return copy;
+      });
+      return;
+    }
       setHistory(prev => ({
         ...prev,
         [exercise]: res.data
       }));
     };
+ 
+  const toggleRecommendation = async (exercise) => {
+  // 👉 si ya existe → ocultar
+  if (recommendations[exercise]) {
+    setRecommendations(prev => {
+      const copy = { ...prev };
+      delete copy[exercise];
+      return copy;
+    });
+    return;
+  }
+  
+  // 👉 si no existe → traer y mostrar
+  const res = await api.get(`/progress/recommendation?exercise=${exercise}`);
 
+  setRecommendations(prev => ({
+    ...prev,
+    [exercise]: res.data
+  }));
+};
 
   // 👉 guarda desde el modal
   const guardarPeso = async (data) => {
     try {
       await api.post("/progress", data);
       alert("Guardado 💪");
+       fetchHistory(data.exercise);
     } catch (err) {
       console.log(err);
     }
+  };
+
+const adjustRoutine = async () => {
+  try {
+    const res = await api.post("/routines/adjust");
+
+    setRoutine(res.data);
+
+    alert("Rutina ajustada automáticamente 🤖");
+  } catch (err) {
+    console.log(err);
+  }
   };
 
   return (
@@ -56,24 +100,43 @@ export default function Dashboard() {
         {routine ? (
           <>
             <h2 className="routine-name">{routine.name}</h2>
-
+            <button onClick={adjustRoutine}>
+              🤖 Ajustar rutina automáticamente
+            </button>
             <div className="grid">
               {routine.exercises.map((ex, i) => (
                 <div className="card" key={i}>
                   <h3>{ex.name}</h3>
-                  <p>{ex.sets} x {ex.reps}</p>
+                  <p>{ex.sets} x {ex.reps} - {ex.weight} kg</p>
 
                   <button onClick={() => abrirModal(ex.name)}>
                     Registrar peso
                   </button>
-                  <button onClick={() => fetchHistory(ex.name)}>
-                     Ver historial
-                  </button>
+                  <button onClick={() => fetchHistory(ex.name)}
+                     className={`btn-rec ${
+                       history[ex.name] ? "hide" : "show"
+                      }`}>
+                        {history[ex.name] ? "❌ Ocultar historial" : "💡 Ver historial"}
+                       </button>
                   {history[ex.name]?.map((h, i) => (
                     <p key={i}>
                       {h.weight}kg x {h.reps} - {new Date(h.date).toLocaleDateString()}
                     </p>
                   ))}
+                  <button
+                  onClick={() => toggleRecommendation(ex.name)}
+                  className={`btn-rec ${
+                    recommendations[ex.name] ? "hide" : "show"
+                  }`}
+                >
+                  {recommendations[ex.name] ? "❌ Ocultar recomendación" : "💡 Ver recomendación"}
+                </button>
+                  {recommendations[ex.name] && (
+                  <p>
+                     <RecommendationCard data={recommendations[ex.name]} />
+                  </p>
+                  )}
+                
                 </div>
               ))}
             </div>

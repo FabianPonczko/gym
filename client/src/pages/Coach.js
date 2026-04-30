@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "./services/api";
 import Layout from "../components/Layout";
+import ProgressChart from "../components/ProgressChart";
 
 export default function Coach() {
   const [clients, setClients] = useState([]);
@@ -16,11 +17,24 @@ export default function Coach() {
   const [selectedRoutine, setSelectedRoutine] = useState("");
 
   const [selectedClientProgress, setSelectedClientProgress] = useState([]);
+  
+const [selectedClientName, setSelectedClientName] = useState("");
 
-  const fetchClientProgress = async (userId) => {
+const fetchClientProgress = async (userId, name) => {
+  try {
     const res = await api.get(`/progress/user/${userId}`);
-  setSelectedClientProgress(res.data);
+    setSelectedClientProgress(res.data);
+    setSelectedClientName(name);
+  } catch (err) {
+    console.log(err);
+  }
 };
+const grouped = selectedClientProgress.reduce((acc, p) => {
+  if (!acc[p.exercise]) acc[p.exercise] = [];
+  acc[p.exercise].push(p);
+  return acc;
+}, {});
+
 
 useEffect(() => {
     fetchClients();
@@ -108,6 +122,12 @@ useEffect(() => {
                     <p key={i}>
                       {p.exercise} - {p.weight}kg x {p.reps}
                     </p>
+                  ))}
+                  {Object.keys(grouped).map((exercise) => (
+                  <div className="card" key={exercise}>
+                    <h3>{exercise}</h3>
+                    <ProgressChart data={grouped[exercise].sort((a, b) => new Date(a.date) - new Date(b.date))} />
+                  </div>
                   ))}
                 </div>
               )}

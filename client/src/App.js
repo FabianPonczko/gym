@@ -28,14 +28,22 @@ import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import Coach from "./pages/Coach";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Landing from "./pages/Landing";
+import Onboarding from "./pages/Onboarding";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+      
+        {/* landing */}
+      <Route path="/" element={<Landing />} />
+      
         {/* login */}
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
 
+        {/* Onboarding */}
+        <Route path="/onboarding" element={<Onboarding />} />
         {/* cliente */}
         <Route
           path="/dashboard"
@@ -68,8 +76,8 @@ function App() {
         <Route
           path="/register"
           element={
-           
-              <Register />
+            
+            <Register />
             
           }
         />
