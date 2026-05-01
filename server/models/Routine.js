@@ -3,17 +3,24 @@ import mongoose from "mongoose";
 const routineSchema = new mongoose.Schema({
   name: String,
   description: String,
-  exercises: [
+
+  days: [
     {
-      name: String,
-      sets: Number,
-      reps: Number,
-      weight: {
-      type: Number,
-      default: 10
-    }
+      day: String,
+      exercises: [
+        {
+          exercise: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Exercise"
+          },
+          sets: Number,
+          reps: Number,
+          weight: Number
+        }
+      ]
     }
   ],
+
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"

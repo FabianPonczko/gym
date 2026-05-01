@@ -11,6 +11,10 @@ export default function Admin() {
   const [routines, setRoutines] = useState([]);
   const [tab, setTab] = useState("users");
   const [editingUser, setEditingUser] = useState(null);
+  const [exercises, setExercises] = useState([]);
+  const [days, setDays] = useState([
+    { day: "Día 1", exercises: [] }
+  ]);
   const [userForm, setUserForm] = useState({
     
     name: "",
@@ -34,9 +38,34 @@ export default function Admin() {
    useEffect(() => {
     fetchUsers()
     fetchRoutines()
+    fetchExercises();
   }, []);
  
+ 
+  const fetchExercises = async () => {
+    const res = await api.get("/exercises");
+    setExercises(res.data);
+  };
+    const addDay = () => {
+      setDays([...days, { day: `Día ${days.length + 1}`, exercises: [] }]);
+    };
+    const addExercise = (dayIndex) => {
+      const updated = [...days];
 
+      updated[dayIndex].exercises.push({
+        exercise: "",
+        sets: 3,
+        reps: 10
+      });
+
+      setDays(updated);
+    };
+
+      const updateExercise = (dayIndex, exIndex, field, value) => {
+      const updated = [...days];
+      updated[dayIndex].exercises[exIndex][field] = value;
+      setDays(updated);
+    };
   // 🔐 protección básica
   let user = null;
   try {
@@ -88,27 +117,36 @@ export default function Admin() {
   };
 
   // 🏋️ CREAR RUTINA
+  // const createRoutine = async () => {
+  //   try {
+  //     const exercisesArray = routineForm.exercises.split(",").map(e => ({
+  //       name: e.trim(),
+  //       sets: 3,
+  //       reps: 10
+  //     }));
+
+  //     await api.post("/routines", {
+  //       name: routineForm.name,
+  //       description: routineForm.description,
+  //       exercises: exercisesArray
+  //     });
+
+  //     alert("Rutina creada 💪");
+  //     setRoutineForm({ name: "", description: "", exercises: "" });
+  //     fetchRoutines();
+  //   } catch (err) {
+  //       alert("Error creando rutina");
+  //   }
+  // };
   const createRoutine = async () => {
-    try {
-      const exercisesArray = routineForm.exercises.split(",").map(e => ({
-        name: e.trim(),
-        sets: 3,
-        reps: 10
-      }));
+  await api.post("/routines", {
+    name: routineForm.name,
+    description: routineForm.description,
+    days
+  });
 
-      await api.post("/routines", {
-        name: routineForm.name,
-        description: routineForm.description,
-        exercises: exercisesArray
-      });
-
-      alert("Rutina creada 💪");
-      setRoutineForm({ name: "", description: "", exercises: "" });
-      fetchRoutines();
-    } catch (err) {
-        alert("Error creando rutina");
-    }
-  };
+  alert("Rutina creada 💪");
+};
 
   // 🔗 ASIGNAR
 
@@ -270,8 +308,10 @@ export default function Admin() {
         {tab === "routines" && (
           <div className="card">
             <h2>Crear Rutina</h2>
-
             <input placeholder="Nombre"
+              value={routineForm.name}
+              onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })} />
+            {/* <input placeholder="Nombre"
               value={routineForm.name}
               onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })} />
 
@@ -283,8 +323,61 @@ export default function Admin() {
               value={routineForm.exercises}
               onChange={e => setRoutineForm({ ...routineForm, exercises: e.target.value })} />
 
-            <button onClick={createRoutine}>Crear rutina</button>
+            <button onClick={createRoutine}>Crear rutina</button> */}
+
+            {days.map((day, i) => (
+            <div className="" key={i}>
+              <h3>{day.day}</h3>
+
+              {day.exercises.map((ex, j) => (
+                <div key={j} >
+
+                  <select
+                    onChange={(e) =>
+                      updateExercise(i, j, "exercise", e.target.value)
+                    }
+                  >
+                    <option>
+                    Ejercicios
+                    </option>
+                    <div>
+
+                    {exercises.map(e => (
+                      <option key={e._id} value={e._id}>
+                        {e.name}
+                      </option>
+                    ))}
+                    </div>
+                  </select>
+
+                  <input
+                    type="number"
+                    placeholder="Sets"
+                    onChange={(e) =>
+                      updateExercise(i, j, "sets", e.target.value)
+                    }
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Reps"
+                    onChange={(e) =>
+                      updateExercise(i, j, "reps", e.target.value)
+                    }
+                  />
+                </div>
+              ))}
+
+              <button onClick={() => addExercise(i)}>
+                + Ejercicio
+              </button>
+            </div>
+          ))}
+
+          <button onClick={addDay}>+ Día</button>
+           <button onClick={createRoutine}>Crear rutina</button>
           </div>
+          
         )}
 
         {/* 🔗 ASIGNAR */}

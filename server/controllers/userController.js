@@ -15,9 +15,26 @@ export const assignRoutine = async (req, res) => {
     res.status(500).json(err);
   }
 };
+// export const getMyRoutine = async (req, res) => {
+//   const user = await User.findById(req.user.id).populate("routine");
+//   res.json(user.routine);
+// };
 export const getMyRoutine = async (req, res) => {
-  const user = await User.findById(req.user.id).populate("routine");
-  res.json(user.routine);
+  try {
+    const user = await User.findById(req.user.id).populate({
+      path: "routine",
+      populate: {
+        path: "days.exercises.exercise",
+        select: "name group"
+      }
+    });
+
+    res.json(user.routine);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Error");
+  }
 };
 
 export const getAllUser = async (req, res) => {

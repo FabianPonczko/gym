@@ -5,7 +5,7 @@ import { getUserFromToken } from "../utils/auth";
 import "./login.css";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -30,7 +30,7 @@ export default function Login() {
   const handleLogin = async () => {
   try {
     const res = await api.post("/auth/login", {
-      email,
+      name,
       password
     });
 
@@ -64,9 +64,9 @@ export default function Login() {
         <p className="subtitle">Bienvenido de nuevo</p>
 
         <input
-          type="email"
-          placeholder="Email"
-          onChange={e => setEmail(e.target.value)}
+          type="name"
+          placeholder="Nombre"
+          onChange={e => setName(e.target.value)}
           className={error ? "input error" : "input"}
         />
 
