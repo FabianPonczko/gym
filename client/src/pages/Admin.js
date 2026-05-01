@@ -3,12 +3,14 @@ import api from "./services/api";
 import Layout from "../components/Layout";
 import ProgressChart from "../components/ProgressChart";
 import "./admin.css";
+import Swal from "sweetalert2";
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [routines, setRoutines] = useState([]);
+  const [selectedRoutineData, setSelectedRoutineData] = useState(null);
   const [tab, setTab] = useState("users");
   const [editingUser, setEditingUser] = useState(null);
   const [exercises, setExercises] = useState([]);
@@ -28,6 +30,34 @@ export default function Admin() {
     description: "",
     exercises: ""
   });
+
+  const handleTabChange = (newTab) => {
+  setTab(newTab);
+
+  // 🔥 limpiar selección cuando entrás a rutinas
+  if (newTab !== "routines") {
+    setSelectedRoutine("");
+    setSelectedRoutineData(null);
+  }
+};
+
+  const handleSelectRoutine = async (id) => {
+  setSelectedRoutine(id);
+
+  const res = await api.get(`/routines/${id}`);
+  setSelectedRoutineData(res.data);
+};
+// eliminar día
+const removeDay = (index) => {
+  setDays(days.filter((_, i) => i !== index));
+};
+
+// eliminar ejercicio
+const removeExercise = (dayIndex, exIndex) => {
+  const updated = [...days];
+  updated[dayIndex].exercises.splice(exIndex, 1);
+  setDays(updated);
+};
 
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedRoutine, setSelectedRoutine] = useState("");
@@ -108,11 +138,25 @@ export default function Admin() {
   const createUser = async () => {
     try {
       await api.post("/auth/register", userForm);
-      alert("Usuario creado ✅");
+       Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Usuario creado",
+      showConfirmButton: false,
+      timer: 1500
+    });
+      
       setUserForm({ name: "", email: "", password: "" ,role:""});
       fetchUsers();
     } catch (err) {
-      alert("Error al crear usuario");
+      Swal.fire({
+      position: "top-end",
+      icon: "error",
+      title: "Error creando usuario",
+      showConfirmButton: false,
+      timer: 1500
+    });
+      
     }
   };
 
@@ -144,8 +188,22 @@ export default function Admin() {
     description: routineForm.description,
     days
   });
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Rutina",
+      showConfirmButton: false,
+      timer: 1500
+    });
+   
 
-  alert("Rutina creada 💪");
+   // 🔥 limpiar selección (ESTO TE FALTA)
+    setSelectedRoutine("");
+    setSelectedRoutineData(null);
+
+    // 🔥 resetear formulario
+    setRoutineForm({ name: "", description: "", exercises: "" });
+    setDays([{ day: "Día 1", exercises: [] }]);
 };
 
   // 🔗 ASIGNAR
@@ -158,15 +216,73 @@ export default function Admin() {
       routineId: selectedRoutine
     });
 
-    alert("Rutina asignada ✅");
+    
+    Swal.fire({
+      icon: "success",
+      title: "Rutina asignada ",
+      showConfirmButton: false,
+      timer: 1500
+    });
     fetchUsers();
   };
 
-  const deleteUser = async (id) => {
-  if (!window.confirm("¿Eliminar usuario?" + id)) return;
+const deleteRoutine = async (id) => {
+  const result = await Swal.fire({
+    title: "¿Eliminar rutina?",
+    text: "Esta acción no se puede deshacer",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#ef4444",
+    cancelButtonColor: "#64748b",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+    reverseButtons: true
+  });
 
-  await api.delete(`/users/${id}`);
-  fetchUsers();
+  if (result.isConfirmed) {
+    await api.delete(`/routines/${id}`);
+
+    Swal.fire({
+      icon: "success",
+      title: "Eliminado",
+      text: "La rutina fue borrada 🗑️",
+      timer: 1500,
+      showConfirmButton: false
+    });
+
+    // 🔥 actualizar UI
+    fetchRoutines();
+    setSelectedRoutineData(null);
+  }
+};
+
+  const deleteUser = async (id) => {
+    const result = await Swal.fire({
+    title: "¿Eliminar usuario?",
+    text: "Esta acción no se puede deshacer",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#ef4444",
+    cancelButtonColor: "#64748b",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+    reverseButtons: true
+  });
+   if (result.isConfirmed) {
+    await api.delete(`/users/${id}`);
+
+    Swal.fire({
+      icon: "success",
+      title: "Eliminado",
+      text: "El usuario fue borrado 🗑️",
+      timer: 1500,
+      showConfirmButton: false
+    });
+    // 🔥 actualizar UI
+    fetchUsers();
+    
+  }
+  
 };
    
 
@@ -178,18 +294,9 @@ export default function Admin() {
       {/* SIDEBAR */}
       <div className="sidebarAdmin">
         <h2>🏋️ Admin</h2>
-
-        <button onClick={() => setTab("users")} className={tab==="users" ? "active" : ""}>
-          👤 Usuarios
-        </button>
-
-        <button onClick={() => setTab("routines")} className={tab==="routines" ? "active" : ""}>
-          🏋️ Rutinas
-        </button>
-
-        <button onClick={() => setTab("assign")} className={tab==="assign" ? "active" : ""}>
-          🔗 Asignar
-        </button>
+          <button onClick={() => handleTabChange("users")} className={tab==="users" ? "active" : ""}>👤 Usuarios</button>
+          <button onClick={() => handleTabChange("routines")} className={tab==="routines" ? "active" : ""}>🏋️ Rutinas</button>
+          <button onClick={() => handleTabChange("assign")} className={tab==="assign" ? "active" : ""}>🔗 Asignar</button>
       </div>
 
       {/* CONTENT */}
@@ -197,7 +304,8 @@ export default function Admin() {
 
         {/* 👤 USUARIOS */}
         {tab === "users" && (
-          <div className="card">
+         
+         <div className="card">
             <h2>Crear Usuario</h2>
 
             <input placeholder="Nombre" value={userForm.name}
@@ -283,14 +391,14 @@ export default function Admin() {
           <button
             className="btn action-view"
             onClick={() => fetchUserProgress(u._id, u.name)}
-          >
+            >
             📊 Ver métricas
           </button>
 
           <button
             className="btn action-delete"
             onClick={() => deleteUser(u._id)}
-          >
+            >
             🗑️ Eliminar
           </button>
         </div>
@@ -307,77 +415,127 @@ export default function Admin() {
         {/* 🏋️ RUTINAS */}
         {tab === "routines" && (
           <div className="card">
+            <div className="routine-editor">
+
             <h2>Crear Rutina</h2>
-              <input placeholder="Nombre"
-                value={routineForm.name}
-                onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })} />
-      
-            {days.map((day, i) => (
-              <div className="" key={i}>
-                <h3>{day.day}</h3>
+            <input
+              placeholder="Nombre rutina"
+              value={routineForm.name}
+              onChange={(e) =>
+                setRoutineForm({ ...routineForm, name: e.target.value })
+              }
+            />
 
-              {day.exercises.map((ex, j) => (
-                <div key={j} >
+            {days.map((day, dayIndex) => (
+              <div className="day-card" key={dayIndex}>
 
-                  <select
-                    onChange={(e) =>
-                      updateExercise(i, j, "exercise", e.target.value)
-                    }
-                  >
-                    <option>
-                    Ejercicios
-                    </option>
-                    <div>
+                <div className="day-header">
+                  <h3>{day.day}</h3>
 
-                    {exercises.map(e => (
-                      <option key={e._id} value={e._id}>
-                        {e.name}
-                      </option>
-                    ))}
-                    </div>
-                  </select>
-
-                  <input
-                    type="number"
-                    placeholder="Sets"
-                    onChange={(e) =>
-                      updateExercise(i, j, "sets", e.target.value)
-                    }
-                  />
-
-                  <input
-                    type="number"
-                    placeholder="Reps"
-                    onChange={(e) =>
-                      updateExercise(i, j, "reps", e.target.value)
-                    }
-                  />
+                  <button onClick={() => removeDay(dayIndex)}>
+                    ❌
+                  </button>
                 </div>
-              ))}
 
-              <button onClick={() => addExercise(i)}>
-                + Ejercicio
-              </button>
+                {day.exercises.map((ex, exIndex) => (
+                  <div className="exercise-row" key={exIndex}>
+
+                    {/* SELECT EJERCICIO */}
+                    <select
+                      value={ex.exercise}
+                      onChange={(e) =>
+                        updateExercise(dayIndex, exIndex, "exercise", e.target.value)
+                      }
+                    >
+                      <option value="">Elegir ejercicio</option>
+
+                      {exercises.map((e) => (
+                        <option key={e._id} value={e._id}>
+                          {e.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* SETS */}
+                    <input
+                      type="number"
+                      value={ex.sets}
+                      onChange={(e) =>
+                        updateExercise(dayIndex, exIndex, "sets", e.target.value)
+                      }
+                    />
+
+                    {/* REPS */}
+                    <input
+                      type="number"
+                      value={ex.reps}
+                      onChange={(e) =>
+                        updateExercise(dayIndex, exIndex, "reps", e.target.value)
+                      }
+                    />
+
+                    {/* DELETE */}
+                    <button
+                      onClick={() => removeExercise(dayIndex, exIndex)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                ))}
+
+                <button onClick={() => addExercise(dayIndex)}>
+                  + Agregar ejercicio
+                </button>
+
               </div>
             ))}
 
-              <button onClick={addDay}>+ Día</button>
-              <button onClick={createRoutine}>Crear rutina</button>
-              
+            <button onClick={addDay}>+ Día</button>
+
+            <button className="save-btn" onClick={createRoutine}>
+              💾 Guardar rutina
+            </button>
+
+          </div>
+             
           {/* ****************************** */}
 
 
             <div className="">
-              <h2>Rutinas existentes</h2> 
-              <select onChange={(e) => setSelectedRoutine(e.target.value)}>
-                <option value="">Selecciona una rutina</option>
-                {routines.map(r => (          
-                  <option key={r._id} value={r._id}>{r.name}</option>
-                ))}
-              </select>
+                <h2>Rutinas existentes</h2> 
+                <select onChange={(e) => handleSelectRoutine(e.target.value)}>
+                  <option value="">Selecciona una rutina</option>
+                  {routines.map(r => (          
+                    <option key={r._id} value={r._id}>{r.name}</option>
+                  ))}
+                </select>
+                
+                {selectedRoutineData && routines.some(r => r._id === selectedRoutineData._id) && (
+                // {selectedRoutineData && (
+                  <div className="">
+                    {/* <h2>{selectedRoutineData.name}</h2> */}
+                    
+                    {selectedRoutineData.days.map((day, i) => (
+                      <div key={i}>
+                        <h4>📅 {day.day}</h4>
+                        {day.exercises.map((ex, j) => (
+                          <p  key={j}>🏋️
+                            {ex.exercise?.name || "Ejercicio"} → 
+                            {ex.sets} x {ex.reps}
+                          </p>
+                        ))}
+                      </div>
+                    ))}
+                      <button
+                        className="btn-icon danger"
+                        onClick={() => deleteRoutine(selectedRoutineData._id)}>🗑️
+                      </button>
+                  </div>
+                  
+                )}
             </div>    
-          
-          
+
+  
           
           </div>
         )}

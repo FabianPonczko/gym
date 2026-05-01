@@ -4,6 +4,7 @@ import WeightModal from "../components/WeightModal";
 import Layout from "../components/Layout"
 import RecommendationCard from "../components/RecommendationCard";
 import "./dashboard.css";
+import Swal from "sweetalert2";
 
 
 export default function Dashboard() {
@@ -17,6 +18,14 @@ export default function Dashboard() {
       try {
         const res = await api.get("/users/my-routine");
         setRoutine(res.data)
+        !routine &&
+        Swal.fire({
+          position: "top-center",
+          icon: "info", 
+          title: "No tienes una rutina asignada",
+          showConfirmButton: false,
+          timer: 2500
+        });
       } catch (err) {
         console.log(err);
       }
@@ -98,7 +107,7 @@ const adjustRoutine = async () => {
         <h1 className="title">🏋️ Mi Rutina</h1>
         {routine ? (
           <>
-            <h2 className="routine-name">{routine.name}</h2>
+        {/* <h2 className="routine-name">{routine.name}</h2> */}
             {/* <button onClick={adjustRoutine}>
               🤖 Ajustar rutina automáticamente
             </button> */}

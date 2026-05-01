@@ -283,3 +283,11 @@
 .table-pro td:nth-child(3) { min-width: 180px; }
 .table-pro td:nth-child(4) { min-width: 180px; }
 /* ===== RESPONSIVE ===== */
+
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+  align-items: start; /* 👈 clave */
+} 

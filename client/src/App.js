@@ -31,11 +31,13 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
 
+
 function App() {
+  
   return (
+     
     <BrowserRouter>
       <Routes>
-      
         {/* landing */}
       <Route path="/" element={<Landing />} />
       
@@ -52,7 +54,7 @@ function App() {
               <Dashboard />
             </ProtectedRoute>
           }
-        />
+          />
 
         {/* admin */}
         <Route
@@ -72,7 +74,7 @@ function App() {
               <Coach />
             </ProtectedRoute>
           }
-        />
+          />
         <Route
           path="/register"
           element={
@@ -80,10 +82,11 @@ function App() {
             <Register />
             
           }
-        />
+          />
         
       </Routes>
     </BrowserRouter>
+
   );
 }
 
