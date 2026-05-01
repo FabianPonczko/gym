@@ -308,26 +308,13 @@ export default function Admin() {
         {tab === "routines" && (
           <div className="card">
             <h2>Crear Rutina</h2>
-            <input placeholder="Nombre"
-              value={routineForm.name}
-              onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })} />
-            {/* <input placeholder="Nombre"
-              value={routineForm.name}
-              onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })} />
-
-            <input placeholder="Descripción"
-              value={routineForm.description}
-              onChange={e => setRoutineForm({ ...routineForm, description: e.target.value })} />
-
-            <input placeholder="Ejercicios (coma)"
-              value={routineForm.exercises}
-              onChange={e => setRoutineForm({ ...routineForm, exercises: e.target.value })} />
-
-            <button onClick={createRoutine}>Crear rutina</button> */}
-
+              <input placeholder="Nombre"
+                value={routineForm.name}
+                onChange={e => setRoutineForm({ ...routineForm, name: e.target.value })} />
+      
             {days.map((day, i) => (
-            <div className="" key={i}>
-              <h3>{day.day}</h3>
+              <div className="" key={i}>
+                <h3>{day.day}</h3>
 
               {day.exercises.map((ex, j) => (
                 <div key={j} >
@@ -371,14 +358,31 @@ export default function Admin() {
               <button onClick={() => addExercise(i)}>
                 + Ejercicio
               </button>
-            </div>
-          ))}
+              </div>
+            ))}
 
-          <button onClick={addDay}>+ Día</button>
-           <button onClick={createRoutine}>Crear rutina</button>
-          </div>
+              <button onClick={addDay}>+ Día</button>
+              <button onClick={createRoutine}>Crear rutina</button>
+              
+          {/* ****************************** */}
+
+
+            <div className="">
+              <h2>Rutinas existentes</h2> 
+              <select onChange={(e) => setSelectedRoutine(e.target.value)}>
+                <option value="">Selecciona una rutina</option>
+                {routines.map(r => (          
+                  <option key={r._id} value={r._id}>{r.name}</option>
+                ))}
+              </select>
+            </div>    
           
+          
+          
+          </div>
         )}
+          
+                  
 
         {/* 🔗 ASIGNAR */}
         {tab === "assign" && (
@@ -418,7 +422,7 @@ export default function Admin() {
         )}
 
       </div>
-    </div>
-  </Layout>
+      </div>
+      </Layout>
 );
 }
