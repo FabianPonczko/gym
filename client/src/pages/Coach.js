@@ -135,27 +135,14 @@ useEffect(() => {
       {/* 📊 CONTENIDO */}
       <div className="coach-content">
 
-        {!selectedClientName ? (
-          <h2>Seleccioná un cliente</h2>
-        ) : (
+        {!selectedClientName ? (null ) : (
           <>
-            <div className="coach-header">
               <h2>{selectedClientName}</h2>
+          <div style={{display:"flex"}}>
+            <div className="coach-header">
             </div>
 
-            {/* GRÁFICOS */}
-            <div className="grid">
-              {Object.keys(grouped).map((exercise) => (
-                <div className="card" key={exercise}>
-                  <h3>{exercise}</h3>
-                  <ProgressChart
-                    data={grouped[exercise].sort(
-                      (a, b) => new Date(a.date) - new Date(b.date)
-                    )}
-                  />
-                </div>
-              ))}
-            </div>
+           
 
             {/* CREAR RUTINA */}
             <div className="card">
@@ -199,6 +186,24 @@ useEffect(() => {
               </select>
 
               <button onClick={assignRoutine}>Asignar</button>
+            </div>
+          </div>      
+          <div>
+
+          
+             {/* GRÁFICOS */}
+            <div className="grid-coach">
+              {Object.keys(grouped).map((exercise) => (
+                <div className="card" key={exercise}>
+                  <h3>{exercise}</h3>
+                  <ProgressChart
+                    data={grouped[exercise].sort(
+                      (a, b) => new Date(a.date) - new Date(b.date)
+                    )}
+                  />
+                </div>
+              ))}
+            </div>
             </div>
           </>
         )}

@@ -32,14 +32,14 @@ export default function Landing() {
           <p>Registrá pesos y progresá semana a semana</p>
         </div>
 
-        <div className="card">
+        {/* <div className="card">
           <h3>🤖 IA integrada</h3>
           <p>La app ajusta tu rutina automáticamente</p>
-        </div>
+        </div> */}
 
         <div className="card">
           <h3>🏋️ Rutinas personalizadas</h3>
-          <p>Asignadas por coach o generadas automáticamente</p>
+          <p>Asignadas por un coach profesional</p>
         </div>
       </section>
 
@@ -58,10 +58,10 @@ export default function Landing() {
             <p>Seguís tu rutina y registrás pesos</p>
           </div>
 
-          <div>
+          {/* <div>
             <h4>3. Mejorá</h4>
             <p>La IA optimiza tu progreso automáticamente</p>
-          </div>
+          </div> */}
         </div>
       </section>
 

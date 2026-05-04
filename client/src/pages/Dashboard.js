@@ -6,7 +6,6 @@ import RecommendationCard from "../components/RecommendationCard";
 import "./dashboard.css";
 import Swal from "sweetalert2";
 
-
 export default function Dashboard() {
   const [routine, setRoutine] = useState(null);
   const [selectedExercise, setSelectedExercise] = useState(null);
@@ -16,31 +15,44 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchRoutine = async () => {
       try {
-        const res = await api.get("/users/my-routine");
-        setRoutine(res.data)
-        !routine &&
-        Swal.fire({
-          position: "top-center",
-          icon: "info", 
-          title: "No tienes una rutina asignada",
-          showConfirmButton: false,
-          timer: 2500
-        });
+        const res = await api.get("users/my-routine");
+     if (res.data && res.data.days && res.data.days.length >0 ) {
+        setRoutine(res.data);
+      } else {
+        // 2. Si la API responde pero no hay datos reales de rutina
+        sinRutina();
+      }
+        
       } catch (err) {
         console.log(err);
-      }
+        sinRutina()
+      }  
+      
     };
 
     fetchRoutine();
+    
+    
   }, []);
+  
+  const sinRutina = () =>{
+              Swal.fire({
+                 position: "center",
+                 icon: "info", 
+                 title: "No tienes una rutina asignada",
+                 showConfirmButton: false,
+                 timer: 2500
+               });
+  }
 
   // 👉 abre el modal
   const abrirModal = (exercise) => {
     setSelectedExercise(exercise);
   };
 
+  
+         
   const fetchHistory = async (exercise) => {
-      
     
     const res = await api.get(`/progress/by-exercise?exercise=${exercise}`);
   if (history[exercise]) {
@@ -160,7 +172,7 @@ const adjustRoutine = async () => {
 
                         <h3>{ex.name}</h3>
 
-                        <p>{item.sets} Reps  x {item.reps}  Series   {item.weight || null} {item.weight ? "kg" : null}</p>
+                        <p>{item.sets} Series  x  {item.reps}  Rep   {item.weight || null} {item.weight ? "kg" : null}</p>
 
                        <div className="buttons-container">
 

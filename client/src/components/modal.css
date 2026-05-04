@@ -4,25 +4,23 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(46, 38, 38, 0.788);
+  
 }
 
 .modal {
   background: #1e293b;
   padding: 25px;
   border-radius: 12px;
-  width: 300px;
   color: white;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  
 }
 
 .modal input {
-  width: 100%;
+  width: 10%;
   padding: 10px;
-  margin-top: 10px;
+  margin-left: 10px;
   border-radius: 8px;
   border: none;
 }
@@ -30,7 +28,7 @@
 .modal-buttons {
   display: flex;
   gap: 10px;
-  margin-top: 15px;
+  margin: 15px;
 }
 
 .modal button {

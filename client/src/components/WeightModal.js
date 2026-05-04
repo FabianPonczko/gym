@@ -20,7 +20,7 @@ export default function WeightModal({ exercise, onClose, onSave }) {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h2>{exercise}</h2>
+        <h2>{exercise}:</h2>
 
         <input
           type="number"

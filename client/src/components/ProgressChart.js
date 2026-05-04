@@ -9,13 +9,16 @@ import {
 
 export default function ProgressChart({ data }) {
   // formatear datos
+  console.log(data);
   const formatted = data.map(d => ({
     date: new Date(d.date).toLocaleDateString(),
-    weight: d.weight
+    weight: d.weight,
+    
   }));
+  
 
   return (
-    <div style={{ width: "100%", height: 300 }}>
+    <div style={{ width: "100%", height: 150 }}>
       <ResponsiveContainer>
         <LineChart data={formatted}>
           <XAxis dataKey="date" />
