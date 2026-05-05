@@ -15,7 +15,7 @@ export default function Coach() {
   const [tab, setTab] = useState("users");
   const [editingUser, setEditingUser] = useState(null);
   const [exercises, setExercises] = useState([]);
-  const [editexercises, setEditExercises] = useState([]);
+  const [editingRoutine, setEditingRoutine] = useState(null);
   const [days, setDays] = useState([
  { day: "Día 1", exercises: [] }
   ]);
@@ -85,7 +85,9 @@ const removeExercise = (dayIndex, exIndex) => {
       const updated = [...days];
       updated[dayIndex].exercises[exIndex][field] = value;
       setDays(updated);
-    };
+      setEditingRoutine(value)
+      console.log("editingroutine:", value); 
+       };
 const deleteRoutine = async (id) => {
   const result = await Swal.fire({
     title: "¿Eliminar rutina?",
@@ -411,6 +413,33 @@ const fetchExercises = async () => {
             </div>
             {/* ****************************  */}
              
+                 <div>
+              {routineForm && routineForm.name.length > 0 && (
+                // {selectedRoutineData && (
+                  <div className="card">
+                    
+                    
+                    {days.map((day, i) => (
+                      <div key={i}>
+                        <h4>📅 {day.day}</h4>
+                        {day.exercises.map((ex, j) => (
+                          <p  className="exercise-item" key={j}>🏋️
+                            {ex.exercise.name} → 
+                            {editingRoutine} →
+                            {ex.sets} x {ex.reps}
+                          </p>
+                        ))}
+                      </div>
+                    ))}
+                      <button
+                        className="btn-icon danger"
+                        onClick={() => setDays([ { day: "Día 1", exercises: [] }])}>🗑️
+                      </button>
+                  </div>
+                  
+                )}
+            </div>
+
           </div>      
           <div>
 
