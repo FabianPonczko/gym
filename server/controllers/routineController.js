@@ -26,6 +26,26 @@ export const getRoutines = async (req, res) => {
   res.json(routines);
 };
 
+export const updateRoutine = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updated = await Routine.findByIdAndUpdate(
+      id,
+      {
+        name: req.body.name,
+        description: req.body.description,
+        days: req.body.days
+      },
+      { new: true }
+    );
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 export const getRoutineById = async (req, res) => {
   try {
     const routine = await Routine.findById(req.params.id).populate(

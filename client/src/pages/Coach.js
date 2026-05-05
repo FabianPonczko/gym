@@ -8,16 +8,17 @@ import "./coach.css";
 export default function Coach() {
   const [clients, setClients] = useState([]);
   const [routines, setRoutines] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [search, setSearch] = useState("");
+  // const [users, setUsers] = useState([]);
+  // const [filteredUsers, setFilteredUsers] = useState([]);
+  // const [search, setSearch] = useState("");
   const [selectedRoutineData, setSelectedRoutineData] = useState(null);
-  const [tab, setTab] = useState("users");
-  const [editingUser, setEditingUser] = useState(null);
+  // const [tab, setTab] = useState("users");
+  // const [editingUser, setEditingUser] = useState(null);
   const [exercises, setExercises] = useState([]);
   const [editingRoutine, setEditingRoutine] = useState(null);
+ 
   const [days, setDays] = useState([
- { day: "Día 1", exercises: [] }
+    { day: "Día 1", exercises: [] }
   ]);
 
   const [routineForm, setRoutineForm] = useState({
@@ -48,12 +49,30 @@ const grouped = selectedClientProgress.reduce((acc, p) => {
   return acc;
 }, {});
 
- const handleSelectRoutine = async (id) => {
+//  const handleSelectRoutine = async (id) => {
+//   setSelectedRoutine(id);
+
+//   const res = await api.get(`/routines/${id}`);
+//   setSelectedRoutineData(res.data);
+// };
+
+// selected rutinas
+const handleSelectRoutine = async (id) => {
   setSelectedRoutine(id);
 
   const res = await api.get(`/routines/${id}`);
+
   setSelectedRoutineData(res.data);
+
+  // 🔥 cargar en editor
+  setRoutineForm({
+    name: res.data.name,
+    description: res.data.description || ""
+  });
+
+  setDays(res.data.days); // 👈 CLAVE
 };
+
 // eliminar día
 const removeDay = (index) => {
   setDays(days.filter((_, i) => i !== index));
@@ -86,8 +105,9 @@ const removeExercise = (dayIndex, exIndex) => {
       updated[dayIndex].exercises[exIndex][field] = value;
       setDays(updated);
       setEditingRoutine(value)
-      console.log("editingroutine:", value); 
+      // console.log("editingroutine:", value); 
        };
+
 const deleteRoutine = async (id) => {
   const result = await Swal.fire({
     title: "¿Eliminar rutina?",
@@ -184,6 +204,19 @@ const fetchExercises = async () => {
     setDays([{ day: "Día 1", exercises: [] }]);
 };
 
+const updateRoutine = async () => {
+  console.log("selectedRoutine",selectedRoutine)
+  await api.put(`/routines/${selectedRoutine}`, {
+    name: routineForm.name,
+    description: routineForm.description,
+    days
+  });
+
+  Swal.fire("Actualizada ✅", "", "success");
+
+  fetchRoutines();
+};
+
   // 🔗 asignar rutina a cliente
   const assignRoutine = async () => {
     if (!selectedClient || !selectedRoutine) return;
@@ -263,7 +296,6 @@ const fetchExercises = async () => {
             </div> */}
             <div className="card">
             <div className="routine-editor">
-
             <h2>Crear Rutina</h2>
             <input
               placeholder="Nombre rutina"
@@ -354,8 +386,12 @@ const fetchExercises = async () => {
           
           </div>
             {/* ASIGNAR */}
+            
+            {routineForm && routineForm.name.length < 3 && (
+
+            
             <div className="card">
-              <h3>Asignar rutina</h3>
+              <h2>Asignar rutina</h2>
 
               <select onChange={(e) => setSelectedClient(e.target.value)}>
                 <option value="">Cliente</option>
@@ -375,16 +411,25 @@ const fetchExercises = async () => {
 
                <div className="">
                 <h2>Rutinas existentes</h2> 
-                <select onChange={(e) => handleSelectRoutine(e.target.value)}>
-                  <option value="">Selecciona una rutina</option>
-                  {routines.map(r => (          
-                    <option key={r._id} value={r._id}>{r.name}</option>
+                
+                <select defaultValue="Seleccione una opción"  onChange={(e) => handleSelectRoutine(e.target.value)}>
+                  
+                  <option value="Seleccione una opción" disabled>Seleccione una opción</option>
+                    {routines?.map(r => (          
+                      <option  key={r._id} value={r._id}>{r.name}</option>
                   ))}
                 </select>
+              
+                
+                  <button className="save-btn" onClick={updateRoutine} >
+                    ✏️ Actualizar rutina
+                  </button>
+                
                 
                 
               </div>
             </div>
+            )}
             
             <div>
               {selectedRoutineData && routines.some(r => r._id === selectedRoutineData._id) && (
@@ -414,30 +459,56 @@ const fetchExercises = async () => {
             {/* ****************************  */}
              
                  <div>
-              {routineForm && routineForm.name.length > 0 && (
+              {routineForm && routineForm.name.length > 3 &&  (
                 // {selectedRoutineData && (
-                  <div className="card">
-                    
-                    
+                  <div className="card" style={{color:"#988"}}>
+                    <h2 >Preview </h2>
+                    <h3>{routineForm.name}</h3>
+
                     {days.map((day, i) => (
                       <div key={i}>
                         <h4>📅 {day.day}</h4>
-                        {day.exercises.map((ex, j) => (
-                          <p  className="exercise-item" key={j}>🏋️
-                            {ex.exercise.name} → 
-                            {editingRoutine} →
-                            {ex.sets} x {ex.reps}
-                          </p>
-                        ))}
+                        {day.exercises.map((ex, j) => {
+                          const found = exercises.find(e => e._id === ex.exercise);
+                            return (
+                              <p key={j}>
+                                {found?.name } → {ex.sets} x {ex.reps}
+                              </p>
+                            );
+                        })}
                       </div>
                     ))}
                       <button
                         className="btn-icon danger"
-                        onClick={() => setDays([ { day: "Día 1", exercises: [] }])}>🗑️
+                        onClick={() => setDays([ { day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine)}>Descartar ❌
                       </button>
                   </div>
                   
                 )}
+          {/* <div>{routineForm.name  &&(
+            <div className="card">
+              <h2>Preview</h2>
+
+              {days.map((d, i) => (
+                <div key={i}>
+                  <h4>{d.day}</h4>
+
+                  {d.exercises.map((ex, j) => {
+                    const found = exercises.find(e => e._id === ex.exercise);
+
+                    return (
+                      <p key={j}>
+                        {found?.name || "Ejercicio"} → {ex.sets} x {ex.reps}
+                      </p>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            )}
+          </div> */}
+
+
             </div>
 
           </div>      
@@ -445,7 +516,7 @@ const fetchExercises = async () => {
 
           
              {/* GRÁFICOS */}
-            <div className="grid-coach">
+            <div className="card">
               {Object.keys(grouped).map((exercise) => (
                 <div className="card" key={exercise}>
                   <h3>{exercise}</h3>
