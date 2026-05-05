@@ -2,11 +2,23 @@ import { useEffect, useState } from "react";
 import api from "./services/api";
 import Layout from "../components/Layout";
 import ProgressChart from "../components/ProgressChart";
+import Swal from "sweetalert2";
 import "./coach.css";
 
 export default function Coach() {
   const [clients, setClients] = useState([]);
   const [routines, setRoutines] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [selectedRoutineData, setSelectedRoutineData] = useState(null);
+  const [tab, setTab] = useState("users");
+  const [editingUser, setEditingUser] = useState(null);
+  const [exercises, setExercises] = useState([]);
+  const [editexercises, setEditExercises] = useState([]);
+  const [days, setDays] = useState([
+ { day: "Día 1", exercises: [] }
+  ]);
 
   const [routineForm, setRoutineForm] = useState({
     name: "",
@@ -36,11 +48,86 @@ const grouped = selectedClientProgress.reduce((acc, p) => {
   return acc;
 }, {});
 
+ const handleSelectRoutine = async (id) => {
+  setSelectedRoutine(id);
+
+  const res = await api.get(`/routines/${id}`);
+  setSelectedRoutineData(res.data);
+};
+// eliminar día
+const removeDay = (index) => {
+  setDays(days.filter((_, i) => i !== index));
+};
+
+// eliminar ejercicio
+const removeExercise = (dayIndex, exIndex) => {
+  const updated = [...days];
+  updated[dayIndex].exercises.splice(exIndex, 1);
+  setDays(updated);
+};
+
+ const addDay = () => {
+      setDays([...days, { day: `Día ${days.length + 1}`, exercises: [] }]);
+    };
+    const addExercise = (dayIndex) => {
+      const updated = [...days];
+
+      updated[dayIndex].exercises.push({
+        exercise: "",
+        sets: 3,
+        reps: 10
+      });
+
+      setDays(updated);
+    };
+
+      const updateExercise = (dayIndex, exIndex, field, value) => {
+      const updated = [...days];
+      updated[dayIndex].exercises[exIndex][field] = value;
+      setDays(updated);
+    };
+const deleteRoutine = async (id) => {
+  const result = await Swal.fire({
+    title: "¿Eliminar rutina?",
+    text: "Esta acción no se puede deshacer",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#ef4444",
+    cancelButtonColor: "#64748b",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+    reverseButtons: true
+  });
+
+  if (result.isConfirmed) {
+    await api.delete(`/routines/${id}`);
+
+    Swal.fire({
+      icon: "success",
+      title: "Eliminado",
+      text: "La rutina fue borrada 🗑️",
+      timer: 1500,
+      showConfirmButton: false
+    });
+
+    // 🔥 actualizar UI
+    fetchRoutines();
+    setSelectedRoutineData(null);
+  }
+};
+
+
 
 useEffect(() => {
     fetchClients();
     fetchRoutines();
-  }, []);
+    fetchExercises()
+  }, [selectedRoutineData]);
+
+const fetchExercises = async () => {
+    const res = await api.get("/exercises");
+    setExercises(res.data);
+  };
 
   // 🔐 verificar rol
   let user = null;
@@ -71,23 +158,29 @@ useEffect(() => {
   };
 
   // 🏋️ crear rutina
-  const createRoutine = async () => {
-    const exercisesArray = routineForm.exercises.split(",").map(e => ({
-      name: e.trim(),
-      sets: 3,
-      reps: 10
-    }));
-
-    await api.post("/routines", {
-      name: routineForm.name,
-      description: routineForm.description,
-      exercises: exercisesArray
+    const createRoutine = async () => {
+  await api.post("/routines", {
+    name: routineForm.name,
+    description: routineForm.description,
+    days
+  });
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Rutina",
+      showConfirmButton: false,
+      timer: 1500
     });
+   
 
-    alert("Rutina creada 💪");
+   // 🔥 limpiar selección (ESTO TE FALTA)
+    setSelectedRoutine("");
+    setSelectedRoutineData(null);
+
+    // 🔥 resetear formulario
     setRoutineForm({ name: "", description: "", exercises: "" });
-    fetchRoutines();
-  };
+    setDays([{ day: "Día 1", exercises: [] }]);
+};
 
   // 🔗 asignar rutina a cliente
   const assignRoutine = async () => {
@@ -145,7 +238,7 @@ useEffect(() => {
            
 
             {/* CREAR RUTINA */}
-            <div className="card">
+            {/* <div className="card">
               <h3>Crear rutina</h3>
 
               <input
@@ -165,8 +258,99 @@ useEffect(() => {
               />
 
               <button onClick={createRoutine}>Crear rutina</button>
-            </div>
+            </div> */}
+            <div className="card">
+            <div className="routine-editor">
 
+            <h2>Crear Rutina</h2>
+            <input
+              placeholder="Nombre rutina"
+              value={routineForm.name}
+              onChange={(e) =>
+                setRoutineForm({ ...routineForm, name: e.target.value })
+              }
+            />
+
+            {days.map((day, dayIndex) => (
+              <div className="day-card" key={dayIndex}>
+
+                <div className="day-header">
+                  <h3>{day.day}</h3>
+
+                  <button onClick={() => removeDay(dayIndex)}>
+                    ❌
+                  </button>
+                </div>
+
+                {day.exercises.map((ex, exIndex) => (
+                  <div className="exercise-row" key={exIndex}>
+                    <p style={{fontSize:"smaller", color:"#aaaa95"}}>Ejercicio {exIndex + 1}</p> 
+                    {/* SELECT EJERCICIO */}
+                    <select
+                      value={ex.exercise}
+                      onChange={(e) =>
+                        updateExercise(dayIndex, exIndex, "exercise", e.target.value)
+                      }
+                    >
+                      <option value="">Elegir ejercicio</option>
+
+                      {exercises.map((e) => (
+                        <option key={e._id} value={e._id}>
+                          {e.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* SETS */}
+                    <input
+                      type="number"
+                      value={ex.sets}
+                      onChange={(e) =>
+                        updateExercise(dayIndex, exIndex, "sets", e.target.value)
+                      }
+                    />
+
+                    {/* REPS */}
+                    <input
+                      type="number"
+                      value={ex.reps}
+                      onChange={(e) =>
+                        updateExercise(dayIndex, exIndex, "reps", e.target.value)
+                      }
+                    />
+
+                    {/* DELETE */}
+                    <button
+                      onClick={() => removeExercise(dayIndex, exIndex)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                ))}
+
+                <button onClick={() => addExercise(dayIndex)}>
+                  + Agregar ejercicio
+                </button>
+
+              </div>
+            ))}
+
+            <button onClick={addDay}>+ Día</button>
+
+            <button className="save-btn" onClick={createRoutine}>
+              💾 Guardar rutina
+            </button>
+
+          </div>
+             
+          {/* ****************************** */}
+
+
+               
+
+  
+          
+          </div>
             {/* ASIGNAR */}
             <div className="card">
               <h3>Asignar rutina</h3>
@@ -186,7 +370,47 @@ useEffect(() => {
               </select>
 
               <button onClick={assignRoutine}>Asignar</button>
+
+               <div className="">
+                <h2>Rutinas existentes</h2> 
+                <select onChange={(e) => handleSelectRoutine(e.target.value)}>
+                  <option value="">Selecciona una rutina</option>
+                  {routines.map(r => (          
+                    <option key={r._id} value={r._id}>{r.name}</option>
+                  ))}
+                </select>
+                
+                
+              </div>
             </div>
+            
+            <div>
+              {selectedRoutineData && routines.some(r => r._id === selectedRoutineData._id) && (
+                // {selectedRoutineData && (
+                  <div className="card">
+                    {/* <h2>{selectedRoutineData.name}</h2> */}
+                    
+                    {selectedRoutineData.days.map((day, i) => (
+                      <div key={i}>
+                        <h4>📅 {day.day}</h4>
+                        {day.exercises.map((ex, j) => (
+                          <p  className="exercise-item" key={j}>🏋️
+                            {ex.exercise?.name || "Ejercicio"} → 
+                            {ex.sets} x {ex.reps}
+                          </p>
+                        ))}
+                      </div>
+                    ))}
+                      <button
+                        className="btn-icon danger"
+                        onClick={() => deleteRoutine(selectedRoutineData._id)}>🗑️
+                      </button>
+                  </div>
+                  
+                )}
+            </div>
+            {/* ****************************  */}
+             
           </div>      
           <div>
 
