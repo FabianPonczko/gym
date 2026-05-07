@@ -1,16 +1,28 @@
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization;
+  let token = req.headers.authorization;
 
-  if (!token) return res.status(401).json("No autorizado");
+  console.log("🔐 RAW HEADER:", token);
+
+  if (!token) {
+    return res.status(401).json("No token");
+  }
+
+  // 🔥 soporta "Bearer xxx" o "xxx"
+  if (token.startsWith("Bearer ")) {
+    token = token.split(" ")[1];
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     req.user = decoded;
+
     next();
-  } catch {
-    res.status(401).json("Token inválido");
+  } catch (err) {
+    console.log("❌ JWT ERROR:", err.message);
+    return res.status(401).json("Token inválido");
   }
 };
 export const isAdmin = (req, res, next) => {

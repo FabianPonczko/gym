@@ -16,6 +16,25 @@ export const addProgress = async (req, res) => {
   }
 };
 
+//delete progress
+export const deleteProgress = async (req, res) => {
+  try {
+    const userId= req.params.id;
+    const progress = await Progress.deleteMany({
+      user: userId,
+    });
+
+   res.json({
+      message: "Progreso borrado con éxito",
+    });
+
+  } catch (err) {
+     res.status(500).json({
+      message: "Error borrando progreso",
+    });
+  }
+};
+
 // 👉 historial por ejercicio (para dashboard)
 export const getProgressByExercise = async (req, res) => {
   const { exercise } = req.query;

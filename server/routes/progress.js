@@ -1,5 +1,5 @@
 import express from "express";
-import {addProgress,getProgressByExercise,getUserProgress,getRecommendation} from "../controllers/progressController.js";
+import {addProgress,getProgressByExercise,getUserProgress,getRecommendation,deleteProgress} from "../controllers/progressController.js";
 
 import { verifyToken } from "../middleware/auth.js";
 
@@ -9,5 +9,6 @@ router.post("/", verifyToken, addProgress);
 router.get("/by-exercise", verifyToken, getProgressByExercise);
 router.get("/user/:userId", verifyToken, getUserProgress);
 router.get("/recommendation", verifyToken, getRecommendation);
+router.delete("/delete/:id", verifyToken, deleteProgress);
 
 export default router;

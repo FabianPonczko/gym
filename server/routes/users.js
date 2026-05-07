@@ -11,7 +11,9 @@ router.get("/my-routine", verifyToken, getMyRoutine);
 router.get("/", verifyToken, getAllUser);
 
 router.get("/me", verifyToken, async (req, res) => {
+console.log("Usuario autenticado:", req.user);
   const user = await User.findById(req.user.id);
+  
   res.json(user);
 });
 
