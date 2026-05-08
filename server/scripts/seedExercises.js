@@ -14,29 +14,45 @@ const seedExercises = async () => {
     // 💪 ejercicios base
     const exercises = [
       // 🟥 PECHO
-      { name: "Press banca", group: "chest" },
-      { name: "Press inclinado", group: "chest" },
+      { name: "Press Banca", group: "chest" },
+      { name: "Press Inclinado", group: "chest" },
+      { name: "Cruces de Polea", group: "chest" },
       { name: "Aperturas", group: "chest" },
 
       // 🟦 ESPALDA
       { name: "Dominadas", group: "back" },
-      { name: "Remo barra", group: "back" },
-      { name: "Jalón al pecho", group: "back" },
+      { name: "Remo Barra", group: "back" },
+      { name: "Remo Polea Baja", group: "back" },
+      { name: "Remo al Pecho", group: "back" },
+      { name: "Jalón al Pecho", group: "back" },
 
       // 🟩 PIERNAS
       { name: "Sentadilla", group: "legs" },
       { name: "Prensa", group: "legs" },
+      { name: "Prensa de pierna 45°", group: "legs" },
       { name: "Peso muerto", group: "legs" },
-      { name: "Gemelos", group: "legs" },
+      { name: "Gemelos en Prensa", group: "legs" },
+      { name: "Gemelos Sentado", group: "legs" },
+      { name: "Curl Femoral Sentado", group: "legs" },
+      { name: "Curl Femoral Acostado", group: "legs" },
+      { name: "Extensiones de Cuádriceps", group: "legs" },
+      { name: "Abductores", group: "legs" },
+      { name: "Crunch Abdominal en polea", group: "legs" },
+      { name: "Peso Muerto Rumano", group: "legs" },
+      { name: "Zancadas", group: "legs" },
+      { name: "Plancha Frontal", group: "legs" },
 
       // 🟨 HOMBROS
-      { name: "Press militar", group: "shoulders" },
+      { name: "Press de Hombros", group: "shoulders" },
       { name: "Elevaciones laterales", group: "shoulders" },
       { name: "Pájaros", group: "shoulders" },
+      { name: "Press Frances", group: "shoulders" },
 
       // 🟪 BRAZOS
-      { name: "Curl bíceps", group: "arms" },
-      { name: "Tríceps polea", group: "arms" },
+      { name: "Curl Bíceps", group: "arms" },
+      { name: "Martillo con Mancuernas", group: "arms" },
+      { name: "Tríceps Polea", group: "arms" },
+      { name: "Biceps con Mancuernas", group: "arms" },
       { name: "Fondos", group: "arms" },
 
       // ⚫ CORE

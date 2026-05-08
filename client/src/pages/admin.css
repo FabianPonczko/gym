@@ -54,20 +54,23 @@
   flex: 1;
   padding: 30px;
   overflow-y: auto;
+  justify-items: flex-start;
+  gap: initial;
 }
 
 /* ===== CARD ===== */
-.card {
+.cardAdmin {
+  margin-bottom: 20px;
   background: #1e293b;
   padding: 20px;
-  border-radius: 14px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  border-radius: 12px;
+  width: 450px;
+  text-align: center;
 }
 
 /* ===== INPUTS ===== */
-.card input,
-.card select,
+.cardAdmin input,
+.cardAdmin select,
 .search {
   width: 90%;
   padding: 12px;
@@ -78,13 +81,13 @@
   color: white;
 }
 
-.card input:focus,
-.card select:focus {
+.cardAdmin input:focus,
+.cardAdmin select:focus {
   outline: 2px solid #38bdf8;
 }
 
 /* ===== BUTTONS GENERALES ===== */
-.card button {
+.cardAdmin button {
   padding: 10px 14px;
   border-radius: 10px;
   border: none;
@@ -95,7 +98,7 @@
   transition: 0.2s;
 }
 
-.card button:hover {
+.cardAdmin button:hover {
   transform: scale(1.01);
 }
 

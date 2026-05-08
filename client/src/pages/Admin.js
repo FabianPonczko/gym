@@ -4,8 +4,10 @@ import Layout from "../components/Layout";
 import ProgressChart from "../components/ProgressChart";
 import "./admin.css";
 import Swal from "sweetalert2";
+import { TailSpin } from 'react-loader-spinner'; // Importa el estilo que prefieras
 
 export default function Admin() {
+   const [cargando, setCargando] = useState(false);
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -120,12 +122,15 @@ const removeExercise = (dayIndex, exIndex) => {
   
   //trae progreso
   const fetchUserProgress = async (userId, name) => {
+    setCargando(true);
   try {
     const res = await api.get(`/progress/user/${userId}`);
     setSelectedUserProgress(res.data);
     setSelectedUserName(name);
   } catch (err) {
     console.log(err);
+  }finally{
+    setCargando(false);
   }
 };
   const grouped = selectedUserProgress.reduce((acc, p) => {
@@ -305,9 +310,9 @@ const deleteRoutine = async (id) => {
         {/* 👤 USUARIOS */}
         {tab === "users" && (
          
-         <div className="card">
+         <div className="cardAdmin">
             <h2>Crear Usuario</h2>
-
+              
             <input placeholder="Nombre" value={userForm.name}
               onChange={e => setUserForm({ ...userForm, name: e.target.value })} />
 
@@ -402,7 +407,9 @@ const deleteRoutine = async (id) => {
             🗑️ Eliminar
           </button>
         </div>
-
+{cargando ? (
+        <TailSpin color="#00BFFF" height={80} width={80} /> // Spinner de la librería
+      ) :null}
       </div>
     ))}
   </div>
@@ -414,7 +421,7 @@ const deleteRoutine = async (id) => {
 
         {/* 🏋️ RUTINAS */}
         {tab === "routines" && (
-          <div className="card">
+          <div className="cardAdmin">
             <div className="routine-editor">
 
             <h2>Crear Rutina</h2>
@@ -490,11 +497,13 @@ const deleteRoutine = async (id) => {
               </div>
             ))}
 
-            <button onClick={addDay}>+ Día</button>
+            <div style={{marginTop:20}}>
+              <button onClick={addDay}>+ Día</button>
 
-            <button className="save-btn" onClick={createRoutine}>
-              💾 Guardar rutina
-            </button>
+              <button className="save-btn" onClick={createRoutine}>
+                💾 Guardar rutina
+              </button>
+            </div>
 
           </div>
              
@@ -544,7 +553,7 @@ const deleteRoutine = async (id) => {
 
         {/* 🔗 ASIGNAR */}
         {tab === "assign" && (
-          <div className="card">
+          <div className="cardAdmin">
             <h2>Asignar rutina</h2>
 
             <select onChange={(e) => setSelectedUser(e.target.value)}>
@@ -567,12 +576,12 @@ const deleteRoutine = async (id) => {
 
         {/* 📊 PROGRESO */}
         {selectedUserProgress.length > 0 && (
-          <div className="card">
+          <div className="cardAdmin">
             <h2>Progreso de {selectedUserName}</h2>
 
             {Object.keys(grouped).map((exercise) => (
-              <div key={exercise}>
-                <h3>{exercise}</h3>
+              <div style={{background:"#9399a31f",borderRadius:20}} key={exercise}>
+                <h3 style={{padding:20}}>{exercise}</h3>
                 <ProgressChart data={grouped[exercise]} />
               </div>
             ))}
