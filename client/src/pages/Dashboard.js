@@ -5,8 +5,11 @@ import Layout from "../components/Layout"
 import RecommendationCard from "../components/RecommendationCard";
 import "./dashboard.css";
 import Swal from "sweetalert2";
+import LoadingOverlay from "../components/LoadingSpin";
+
 
 export default function Dashboard() {
+  const [cargando,setCargando] = useState(false)
   const [routine, setRoutine] = useState(null);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [history, setHistory] = useState({}); 
@@ -14,6 +17,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchRoutine = async () => {
+      setCargando(true)
       try {
         const res = await api.get("users/my-routine");
      if (res.data && res.data.days && res.data.days.length >0 ) {
@@ -26,7 +30,9 @@ export default function Dashboard() {
       } catch (err) {
         console.log(err);
         sinRutina()
-      }  
+      } finally{
+        setCargando(false)
+      }
       
     };
 
@@ -115,6 +121,8 @@ const adjustRoutine = async () => {
   return (
 
     <Layout>
+      <LoadingOverlay cargando={cargando}></LoadingOverlay>
+
       <div className="container">
         <h1 className="title">🏋️ Mi Rutina</h1>
         {routine ? (

@@ -5,6 +5,7 @@ import ProgressChart from "../components/ProgressChart";
 import "./admin.css";
 import Swal from "sweetalert2";
 import { TailSpin } from 'react-loader-spinner'; // Importa el estilo que prefieras
+import LoadingOverlay from "../components/LoadingSpin";
 
 export default function Admin() {
    const [cargando, setCargando] = useState(false);
@@ -44,10 +45,17 @@ export default function Admin() {
 };
 
   const handleSelectRoutine = async (id) => {
-  setSelectedRoutine(id);
+    setSelectedRoutine(id);
+    setCargando(true)
+  try{
+    const res = await api.get(`/routines/${id}`);
+    setSelectedRoutineData(res.data);
+  }catch(err){
+    console.log(err)
+  }finally{
+    setCargando(false)
+  }
 
-  const res = await api.get(`/routines/${id}`);
-  setSelectedRoutineData(res.data);
 };
 // eliminar día
 const removeDay = (index) => {
@@ -116,8 +124,15 @@ const removeExercise = (dayIndex, exIndex) => {
   };
 
   const fetchRoutines = async () => {
-    const res = await api.get("/routines");
-    setRoutines(res.data);
+    setCargando(true)
+    try{
+      const res = await api.get("/routines");
+      setRoutines(res.data);
+    }catch(err){
+      console.log(err)
+    }finally{
+      setCargando(false)
+    }
   };
   
   //trae progreso
@@ -293,7 +308,10 @@ const deleteRoutine = async (id) => {
 
 
   return (
-  <Layout>
+    <Layout>
+    
+    <LoadingOverlay cargando={cargando} />
+
     <div className="admin-container">
 
       {/* SIDEBAR */}
@@ -407,9 +425,7 @@ const deleteRoutine = async (id) => {
             🗑️ Eliminar
           </button>
         </div>
-{cargando ? (
-        <TailSpin color="#00BFFF" height={80} width={80} /> // Spinner de la librería
-      ) :null}
+
       </div>
     ))}
   </div>

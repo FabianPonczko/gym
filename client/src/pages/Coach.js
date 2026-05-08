@@ -4,8 +4,10 @@ import Layout from "../components/Layout";
 import ProgressChart from "../components/ProgressChart";
 import Swal from "sweetalert2";
 import "./coach.css";
+import LoadingOverlay from "../components/LoadingSpin";
 
 export default function Coach() {
+  const [cargando,setCargando] = useState(false)
   const [clients, setClients] = useState([]);
   const [routines, setRoutines] = useState([]);
   // const [users, setUsers] = useState([]);
@@ -35,14 +37,18 @@ export default function Coach() {
 const [selectedClientName, setSelectedClientName] = useState("");
 
 const fetchClientProgress = async (userId, name) => {
+  
   try {
     const res = await api.get(`/progress/user/${userId}`);
     setSelectedClientProgress(res.data);
     setSelectedClientName(name);
   } catch (err) {
     console.log(err);
+  }finally{
+  
   }
 };
+
 const grouped = selectedClientProgress.reduce((acc, p) => {
   if (!acc[p.exercise]) acc[p.exercise] = [];
   acc[p.exercise].push(p);
@@ -142,9 +148,9 @@ const deleteRoutine = async (id) => {
 
 useEffect(() => {
     fetchClients();
-    fetchRoutines();
-    fetchExercises()
-  }, [selectedRoutineData]);
+ fetchRoutines();
+    // fetchExercises()
+  }, []);
 
 const fetchExercises = async () => {
     const res = await api.get("/exercises");
@@ -165,9 +171,16 @@ const fetchExercises = async () => {
  
 
   const fetchClients = async () => {
-    const res = await api.get("/users");
-      const onlyClients = res.data.filter(u => u.role === "client");
-      setClients(onlyClients);
+    setCargando(true)
+    try{
+      const res = await api.get("/users");
+        const onlyClients = res.data.filter(u => u.role === "client");
+        setClients(onlyClients);
+    }catch(err){
+      console.log(err)
+    }finally{
+      setCargando(false)
+    }
       
    
     
@@ -234,6 +247,8 @@ const updateRoutine = async () => {
 
   return (
   <Layout>
+    <LoadingOverlay cargando={cargando}></LoadingOverlay>
+  
     <div className="coach-container">
 
       {/* 👥 CLIENTES */}
@@ -266,7 +281,8 @@ const updateRoutine = async () => {
         {!selectedClientName ? (null ) : (
           <>
               <h2>{selectedClientName}</h2>
-          <div style={{display:"flex"}}>
+
+          <div className="coach-Container">
             <div className="coach-header">
             </div>
 
@@ -294,7 +310,7 @@ const updateRoutine = async () => {
 
               <button onClick={createRoutine}>Crear rutina</button>
             </div> */}
-            <div className="card">
+            <div className="cardCoach">
             <div className="routine-editor">
             <h2>Crear Rutina</h2>
             <input
@@ -390,7 +406,7 @@ const updateRoutine = async () => {
             {routineForm && routineForm.name.length < 3 && (
 
             
-            <div className="card">
+            <div className="cardCoach">
               <h2>Asignar rutina</h2>
 
               <select onChange={(e) => setSelectedClient(e.target.value)}>
