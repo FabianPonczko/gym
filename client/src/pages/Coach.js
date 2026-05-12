@@ -280,7 +280,7 @@ const updateRoutine = async () => {
 
         {!selectedClientName ? (null ) : (
           <>
-              <h2>{selectedClientName}</h2>
+              {/* <h2>{selectedClientName}</h2> */}
 
           <div className="coach-Container">
             <div className="coach-header">
@@ -447,6 +447,7 @@ const updateRoutine = async () => {
             </div>
             )}
             
+
             <div>
               {selectedRoutineData && routines.some(r => r._id === selectedRoutineData._id) && (
                 // {selectedRoutineData && (
@@ -532,7 +533,7 @@ const updateRoutine = async () => {
 
           
              {/* GRÁFICOS */}
-            <div className="card">
+            <div className="cardGraficos">
               {Object.keys(grouped).map((exercise) => (
                 <div className="card" key={exercise}>
                   <h3>{exercise}</h3>

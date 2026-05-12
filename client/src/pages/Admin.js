@@ -1,4 +1,4 @@
-import {  useEffect,useState } from "react";
+import {  useEffect,useState,useRef } from "react";
 import api from "./services/api";
 import Layout from "../components/Layout";
 import ProgressChart from "../components/ProgressChart";
@@ -28,15 +28,33 @@ export default function Admin() {
     role:""
   });
 
-  const [routineForm, setRoutineForm] = useState({
+    const [routineForm, setRoutineForm] = useState({
     name: "",
     description: "",
     exercises: ""
   });
+const convertirAISO = (fechaStr) => {
+  const [dia, mes, anio] = fechaStr.split('-');
+  return `${anio}-${mes}-${dia}`;
+};
+const scrollRef = useRef(null);
+// filtro de fechas
+
+const hoy = new Date().toISOString().split('T')[0];
+  
+  // Fecha de hace 7 días
+  const hace7Dias = new Date();
+  hace7Dias.setDate(hace7Dias.getDate() - 7);
+  const inicioDefault = hace7Dias.toISOString().split('T')[0];
+
+  const [fechaInicio, setFechaInicio] = useState(inicioDefault);
+  const [fechaFin, setFechaFin] = useState(hoy);
+
+// ------------------
 
   const handleTabChange = (newTab) => {
   setTab(newTab);
-
+  setSelectedUserProgress([])
   // 🔥 limpiar selección cuando entrás a rutinas
   if (newTab !== "routines") {
     setSelectedRoutine("");
@@ -79,6 +97,7 @@ const removeExercise = (dayIndex, exIndex) => {
     fetchUsers()
     fetchRoutines()
     fetchExercises();
+    
   }, []);
  
  
@@ -306,7 +325,6 @@ const deleteRoutine = async (id) => {
 };
    
 
-
   return (
     <Layout>
     
@@ -326,8 +344,9 @@ const deleteRoutine = async (id) => {
       <div className="content">
 
         {/* 👤 USUARIOS */}
-        {tab === "users" && (
-         
+        {tab === "users" &&  (
+
+        !selectedUserProgress.length > 0 ?(
          <div className="cardAdmin">
             <h2>Crear Usuario</h2>
               
@@ -381,6 +400,9 @@ const deleteRoutine = async (id) => {
                 setFilteredUsers(filtered);
               }}
             />
+           
+
+        
 
   {/* tabla de usuarios */}
   <div className="table-wrapper">
@@ -433,6 +455,9 @@ const deleteRoutine = async (id) => {
 </div>
 
           </div>
+        ):(
+          null
+        )
         )}
 
         {/* 🏋️ RUTINAS */}
@@ -569,6 +594,7 @@ const deleteRoutine = async (id) => {
 
         {/* 🔗 ASIGNAR */}
         {tab === "assign" && (
+          ()=>setSelectedUserProgress([]),
           <div className="cardAdmin">
             <h2>Asignar rutina</h2>
 
@@ -591,9 +617,11 @@ const deleteRoutine = async (id) => {
         )}
 
         {/* 📊 PROGRESO */}
-        {selectedUserProgress.length > 0 && (
-          <div className="cardAdmin">
+        {/* {selectedUserProgress.length > 0 && (
+          
+          <div  style={{width:"700px",textAlign:"center"}}>
             <h2>Progreso de {selectedUserName}</h2>
+          <div className="cardProgreso">
 
             {Object.keys(grouped).map((exercise) => (
               <div style={{background:"#9399a31f",borderRadius:20}} key={exercise}>
@@ -602,10 +630,221 @@ const deleteRoutine = async (id) => {
               </div>
             ))}
           </div>
-        )}
+
+            <div 
+    // ref={scrollRef} 
+    className="cardProgreso"
+    style={{ height: '500px', overflowY: 'auto' }}
+  >
+
+    <div className="filtros-calendario" style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+      <input 
+        type="date" 
+        value={fechaInicio} 
+        onChange={(e) => setFechaInicio(e.target.value)} 
+      />
+      <input 
+        type="date" 
+        value={fechaFin} 
+        onChange={(e) => setFechaFin(e.target.value)} 
+      />
+    </div>
+
+
+    {selectedUserProgress
+      .filter(item => {
+        const fechaItem = item.fecha; // Asumiendo que viene como "YYYY-MM-DD"
+        return fechaItem >= fechaInicio && fechaItem <= fechaFin;
+      })
+      .map((progreso, index) => (
+        <div key={index}>
+
+          <p>Día: {progreso.fecha} - Progreso: {progreso.valor}</p>
+        </div>
+      ))
+    }
+  </div>
+
+            <div  className="cardAdmin" style={{width:"700px"}}>
+            <button
+            onClick={()=>setSelectedUserProgress([])}
+            >Ocultar proceso</button>
+            </div>
+          </div>
+        )} */}
+
+{selectedUserProgress.length > 0 && (
+  <div style={{ width: "700px", textAlign: "center" }}>
+    <h2>Progreso de {selectedUserName}</h2>
+
+    {/* 📅 Calendario */}
+    
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
+      <input 
+        type="date" 
+        className="btn"
+        value={fechaInicio} 
+        onChange={(e) => setFechaInicio(e.target.value)} 
+      />
+      <input 
+        type="date" 
+        className="btn"
+        value={fechaFin} 
+        onChange={(e) => setFechaFin(e.target.value)} 
+      />
+    </div>
+
+    <div className="cardProgreso" ref={scrollRef}>
+      
+
+
+    {Object.keys(grouped).map((exercise) => {
+  const dataFiltrada = grouped[exercise].filter(item => {
+    const fechaISO = item.date.split('T')[0];
+    return fechaISO >= fechaInicio && fechaISO <= fechaFin;
+  });
+
+  if (dataFiltrada.length === 0) return null;
+
+  // 1. Cálculos de Récords y Progreso
+  const todosLosPesos = dataFiltrada.map(d => d.weight);
+  console.log("datafiltrada",dataFiltrada)
+  const maxHistorico = Math.max(...grouped[exercise].map(d => d.weight)); // Récord de todos los tiempos
+  const maxActual = Math.max(...todosLosPesos); // Récord en este rango de fechas
+  const ultimoPeso = dataFiltrada[dataFiltrada.length - 1].weight;
+  
+  // % de progreso respecto al récord histórico
+  const porcentajePR = Math.min((ultimoPeso / maxHistorico) * 100, 100);
+
+  return (
+    <div key={exercise} style={styles.exerciseCard}>
+      {/* Cabecera con nombre y récord */}
+      <div style={styles.header}>
+        <div style={{ textAlign: 'left' }}>
+          <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{exercise}</h3>
+          <span style={{ fontSize: '0.8rem', color: '#9ca3af' }}>Récord Personal: {maxHistorico}kg</span>
+        </div>
+        <div style={styles.badgePR}>
+           {ultimoPeso} <small>kg actuales</small>
+        </div>
+      </div>
+
+      {/* 📊 BARRA DE PROGRESO VISUAL */}
+      <div style={styles.progressContainer}>
+        <div style={styles.progressBarBackground}>
+          <div style={{ ...styles.progressBarFill, width: `${porcentajePR}%` }}>
+            {porcentajePR === 100 && <span style={styles.prStar}>⭐ ¡Récord!</span>}
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px', fontSize: '0.75rem' }}>
+          <span style={{ color: '#9ca3af' }}>0kg</span>
+          <span style={{ color: '#fff', fontWeight: 'bold' }}>{porcentajePR.toFixed(0)}% del PR</span>
+          <span style={{ color: '#9ca3af' }}>{maxHistorico}kg</span>
+        </div>
+      </div>
+
+      {/* Historial rápido (horizontal scroll) */}
+      <div style={styles.historyList}>
+        {dataFiltrada.map((log, i) => (
+          <div key={i} style={styles.historyItem}>
+            <span style={styles.dateLabel}>
+              {new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+            </span>
+            <span style={styles.valueLabel}>  - {log.weight}kg</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+})}
+
+
+
+
+
+
+    </div>
+   <div  className="cardAdmin" style={{width:"700px"}}>
+            <button
+            onClick={()=>setSelectedUserProgress([])}
+            >Ocultar proceso</button>
+            </div>
+  </div>
+)}
 
       </div>
       </div>
       </Layout>
 );
 }
+
+const styles = {
+  exerciseCard: {
+    background: "rgba(147, 153, 163, 0.12)",
+    borderRadius: '20px',
+    padding: '20px',
+    marginBottom: '15px',
+    border: '1px solid rgba(255,255,255,0.05)'
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '15px',
+    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    paddingBottom: '10px'
+  },
+  historyList: {
+    display: 'flex',
+    gap: '10px',
+    overflowX: 'auto', // Scroll horizontal si hay muchos días
+    paddingBottom: '5px'
+  },
+  historyItem: {
+    background: 'rgba(0,0,0,0.2)',
+    padding: '10px 15px',
+    borderRadius: '12px',
+    minWidth: '80px',
+    textAlign: 'center'
+  },
+  dateLabel: { display: 'block', fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase' },
+  valueLabel: { fontSize: '18px', fontWeight: 'bold', color: '#fff' },
+  badge: { fontSize: '14px', fontWeight: 'bold', background: 'rgba(0,0,0,0.3)', padding: '4px 10px', borderRadius: '20px' },
+
+
+
+  // ... (los estilos anteriores se mantienen) ...
+  progressContainer: {
+    margin: '20px 0',
+    padding: '0 10px'
+  },
+  progressBarBackground: {
+    height: '12px',
+    background: 'rgba(255,255,255,0.1)',
+    borderRadius: '10px',
+    overflow: 'hidden',
+    position: 'relative'
+  },
+  progressBarFill: {
+    height: '100%',
+    background: 'linear-gradient(90deg, #6366f1 0%, #a855f7 100%)', // Degradado moderno
+    borderRadius: '10px',
+    transition: 'width 0.5s ease-in-out',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  badgePR: {
+    background: '#4f46e5',
+    padding: '8px 12px',
+    borderRadius: '12px',
+    fontWeight: 'bold',
+    fontSize: '1.1rem'
+  },
+  prStar: {
+    fontSize: '10px',
+    color: '#fff',
+    fontWeight: 'bold',
+    textShadow: '0 0 5px rgba(0,0,0,0.5)'
+  }
+};

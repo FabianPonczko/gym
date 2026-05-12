@@ -77,11 +77,15 @@
 
 /* CARD */
 .cardCoach {
+  display: flex;
+  flex-direction: column;
   background: #1e293b;
   padding: 15px;
   border-radius: 12px;
-  margin: 10px;
+  /* margin: 10px; */
+  margin: 10px 0px 10px 10px;
   height: 450px;
+  width: 250px;
   overflow: scroll;
   -ms-overflow-style: none; 
   scrollbar-width: none;  
@@ -120,6 +124,16 @@
 .cardCoach button:hover {
   transform: scale(1.01);
 }
+
+/* cardGraficos */
+.cardGraficos{
+display: grid;
+margin-left: 10px;
+grid-template-columns: repeat(2, 1fr);
+gap: 10px;
+width:400px;
+};
+
 
 .exercise-item {
   font-size: smaller;

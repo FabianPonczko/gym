@@ -17,7 +17,7 @@
   width: 200px;
   height: 100vh;
   background: #0f172a;
-  padding: 8px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   border-right: 1px solid #1e293b;
@@ -52,18 +52,20 @@
 /* ===== CONTENT ===== */
 .content {
   flex: 1;
-  padding: 30px;
+  /* padding: 10px; */
+  margin-left: 10px;
   overflow-y: auto;
   justify-items: flex-start;
   gap: initial;
 }
+
 
 /* ===== CARD ===== */
 .cardAdmin {
   margin-bottom: 20px;
   background: #b9c4d41f;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 5px;
   width: 450px;
   text-align: center;
 }
@@ -102,6 +104,19 @@
   transform: scale(1.01);
 }
 
+.cardProgreso {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap:10px;
+  margin-bottom: 20px;
+  background: #b9c4d41f;
+  border-radius: 5px;
+  width: 700px;
+   text-align: center;
+   overflow: scroll;
+  -ms-overflow-style: none; 
+  scrollbar-width: none;  
+}
 /* ===== TABLE ===== */
 
 
