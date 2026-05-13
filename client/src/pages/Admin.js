@@ -4,7 +4,7 @@ import Layout from "../components/Layout";
 import ProgressChart from "../components/ProgressChart";
 import "./admin.css";
 import Swal from "sweetalert2";
-import { TailSpin } from 'react-loader-spinner'; // Importa el estilo que prefieras
+import { Grid, TailSpin } from 'react-loader-spinner'; // Importa el estilo que prefieras
 import LoadingOverlay from "../components/LoadingSpin";
 
 export default function Admin() {
@@ -674,7 +674,7 @@ const deleteRoutine = async (id) => {
         )} */}
 
 {selectedUserProgress.length > 0 && (
-  <div style={{ width: "700px", textAlign: "center" }}>
+  <div style={{ width: "90%", textAlign: "center" }}>
     <h2>Progreso de {selectedUserName}</h2>
 
     {/* 📅 Calendario */}
@@ -685,6 +685,7 @@ const deleteRoutine = async (id) => {
         className="btn"
         value={fechaInicio} 
         onChange={(e) => setFechaInicio(e.target.value)} 
+
       />
       <input 
         type="date" 
@@ -706,7 +707,7 @@ const deleteRoutine = async (id) => {
 
   if (dataFiltrada.length === 0) return null;
 
-  // 1. Cálculos de Récords y Progreso
+   // 1. Cálculos de Récords y Progreso
   const todosLosPesos = dataFiltrada.map(d => d.weight);
   console.log("datafiltrada",dataFiltrada)
   const maxHistorico = Math.max(...grouped[exercise].map(d => d.weight)); // Récord de todos los tiempos
@@ -745,7 +746,7 @@ const deleteRoutine = async (id) => {
 
       {/* Historial rápido (horizontal scroll) */}
       <div style={styles.historyList}>
-        {dataFiltrada.map((log, i) => (
+        {dataFiltrada.slice(-5).map((log, i) => (
           <div key={i} style={styles.historyItem}>
             <span style={styles.dateLabel}>
               {new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
@@ -783,8 +784,8 @@ const styles = {
     background: "rgba(147, 153, 163, 0.12)",
     borderRadius: '20px',
     padding: '20px',
-    marginBottom: '15px',
-    border: '1px solid rgba(255,255,255,0.05)'
+    margin: '10px',
+    border: '1px solid rgba(255, 255, 255, 0.16)'
   },
   header: {
     display: 'flex',
@@ -799,6 +800,7 @@ const styles = {
     gap: '10px',
     overflowX: 'auto', // Scroll horizontal si hay muchos días
     paddingBottom: '5px'
+
   },
   historyItem: {
     background: 'rgba(0,0,0,0.2)',
@@ -819,7 +821,7 @@ const styles = {
     padding: '0 10px'
   },
   progressBarBackground: {
-    height: '12px',
+    height: '22px',
     background: 'rgba(255,255,255,0.1)',
     borderRadius: '10px',
     overflow: 'hidden',
