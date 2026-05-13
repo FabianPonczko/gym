@@ -751,7 +751,7 @@ const deleteRoutine = async (id) => {
             <span style={styles.dateLabel}>
               {new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
             </span>
-            <span style={styles.valueLabel}>  - {log.weight}kg</span>
+            <span style={styles.valueLabel}>  {log.weight} kg</span>
           </div>
         ))}
       </div>
@@ -765,10 +765,10 @@ const deleteRoutine = async (id) => {
 
 
     </div>
-   <div  className="cardAdmin" style={{width:"700px"}}>
+   <div  className="cardAdmin" style={{width:"100%",background:"transparent",boxShadow:"none"}}>
             <button
             onClick={()=>setSelectedUserProgress([])}
-            >Ocultar proceso</button>
+            >Volver</button>
             </div>
   </div>
 )}
