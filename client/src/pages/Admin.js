@@ -679,7 +679,7 @@ const deleteRoutine = async (id) => {
 
     {/* 📅 Calendario */}
     
-    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px' ,padding:10,borderRadius:10}}>
       <input 
         type="date" 
         className="btn"

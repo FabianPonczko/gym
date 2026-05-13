@@ -45,7 +45,7 @@
 }
 
 .sidebarAdmin .active {
-  background: #4f46e5;
+  background:  #4f46e5;
   color: white
 }
 
@@ -94,7 +94,7 @@
   border-radius: 10px;
   border: none;
   cursor: pointer;
-  background: linear-gradient(135deg, #756fe5, #4f46e5);
+  background: linear-gradient(135deg, #6059e4, #4f46e5);
   color: white;
   font-weight: 600;
   transition: 0.2s;
@@ -226,6 +226,8 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
+  color:white;
+  background: linear-gradient(135deg, #6059e4, #4f46e5);
 }
 
 /* 📊 */
