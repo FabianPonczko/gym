@@ -194,27 +194,30 @@ const fetchExercises = async () => {
 
   // 🏋️ crear rutina
     const createRoutine = async () => {
-  await api.post("/routines", {
-    name: routineForm.name,
-    description: routineForm.description,
-    days
-  });
-    Swal.fire({
-      position: "top-end",
-      icon: "success",
-      title: "Rutina",
-      showConfirmButton: false,
-      timer: 1500
-    });
-   
-
-   // 🔥 limpiar selección (ESTO TE FALTA)
-    setSelectedRoutine("");
-    setSelectedRoutineData(null);
-
-    // 🔥 resetear formulario
-    setRoutineForm({ name: "", description: "", exercises: "" });
-    setDays([{ day: "Día 1", exercises: [] }]);
+      
+        await api.post("/routines", {
+          name: routineForm.name,
+          description: routineForm.description,
+          days
+        })
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Rutina",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      
+        
+  
+  // 🔥 limpiar selección (ESTO TE FALTA)
+  setSelectedRoutine("");
+  setSelectedRoutineData(null);
+  
+  // 🔥 resetear formulario
+  setRoutineForm({ name: "", description: "", exercises: "" });
+  setDays([{ day: "Día 1", exercises: [] }]);
+  fetchRoutines();
 };
 
 const updateRoutine = async () => {
@@ -227,7 +230,6 @@ const updateRoutine = async () => {
 
   Swal.fire("Actualizada ✅", "", "success");
 
-  fetchRoutines();
 };
 
   // 🔗 asignar rutina a cliente

@@ -4,7 +4,6 @@ import Layout from "../components/Layout";
 import ProgressChart from "../components/ProgressChart";
 import "./admin.css";
 import Swal from "sweetalert2";
-import { Grid, TailSpin } from 'react-loader-spinner'; // Importa el estilo que prefieras
 import LoadingOverlay from "../components/LoadingSpin";
 
 export default function Admin() {
@@ -35,7 +34,7 @@ export default function Admin() {
   });
 const convertirAISO = (fechaStr) => {
   const [dia, mes, anio] = fechaStr.split('-');
-  return `${anio}-${mes}-${dia}`;
+  return `${dia}/${mes}/${anio}`;
 };
 const scrollRef = useRef(null);
 // filtro de fechas
@@ -68,13 +67,24 @@ const hoy = new Date().toISOString().split('T')[0];
   try{
     const res = await api.get(`/routines/${id}`);
     setSelectedRoutineData(res.data);
+    // 🔥 cargar en editor
+    setRoutineForm({
+      name: res.data.name,
+      description: res.data.description || "",
+      exercises: ""
+    });
+    
+    setDays(res.data.days); // 👈 CLAVE
+
   }catch(err){
     console.log(err)
   }finally{
     setCargando(false)
   }
-
 };
+
+
+
 // eliminar día
 const removeDay = (index) => {
   setDays(days.filter((_, i) => i !== index));
@@ -230,11 +240,11 @@ const removeExercise = (dayIndex, exIndex) => {
     Swal.fire({
       position: "top-end",
       icon: "success",
-      title: "Rutina",
+      title: "Rutina cargada",
       showConfirmButton: false,
       timer: 1500
     });
-   
+   fetchRoutines();
 
    // 🔥 limpiar selección (ESTO TE FALTA)
     setSelectedRoutine("");
@@ -411,7 +421,7 @@ const deleteRoutine = async (id) => {
 
   {/* 📱 MOBILE CARDS */}
   <div className="mobile-only">
-    {filteredUsers.map(u => (
+    {filteredUsers.filter(p=>p.role==="client").map(u => (
       <div className="user-card" key={u._id}>
         
         <div className="user-header">
@@ -462,8 +472,9 @@ const deleteRoutine = async (id) => {
 
         {/* 🏋️ RUTINAS */}
         {tab === "routines" && (
-          <div className="cardAdmin">
-            <div className="routine-editor">
+          <div className="content-rutinas">
+           <div>
+            <div className="cardAdmin">
 
             <h2>Crear Rutina</h2>
             <input
@@ -479,15 +490,16 @@ const deleteRoutine = async (id) => {
 
                 <div className="day-header">
                   <h3>{day.day}</h3>
-
-                  <button onClick={() => removeDay(dayIndex)}>
+                  {day.day !== "Día 1" &&(
+                    <button onClick={() => removeDay(dayIndex)}>
                     ❌
                   </button>
+                  )}
+
                 </div>
 
                 {day.exercises.map((ex, exIndex) => (
                   <div className="exercise-row" key={exIndex}>
-
                     {/* SELECT EJERCICIO */}
                     <select
                       value={ex.exercise}
@@ -551,7 +563,7 @@ const deleteRoutine = async (id) => {
           {/* ****************************** */}
 
 
-            <div className="">
+            <div className="cardAdmin">
                 <h2>Rutinas existentes</h2> 
                 <select onChange={(e) => handleSelectRoutine(e.target.value)}>
                   <option value="">Selecciona una rutina</option>
@@ -563,15 +575,14 @@ const deleteRoutine = async (id) => {
                 {selectedRoutineData && routines.some(r => r._id === selectedRoutineData._id) && (
                 // {selectedRoutineData && (
                   <div className="">
-                    {/* <h2>{selectedRoutineData.name}</h2> */}
-                    
-                    {selectedRoutineData.days.map((day, i) => (
-                      <div key={i}>
+                    <h2>{selectedRoutineData.name}</h2>
+                    {selectedRoutineData.days.map((day, dayIndex) => (
+                      <div key={dayIndex}>
                         <h4>📅 {day.day}</h4>
-                        {day.exercises.map((ex, j) => (
-                          <p  key={j}>🏋️
+                        {day.exercises.map((ex, exIndex) => (
+                          <p  key={exIndex}>🏋️
                             {ex.exercise?.name || "Ejercicio"} → 
-                            {ex.sets} x {ex.reps}
+                            {ex.sets} x {ex.reps} 
                           </p>
                         ))}
                       </div>
@@ -585,9 +596,43 @@ const deleteRoutine = async (id) => {
                 )}
             </div>    
 
-  
+          </div>      
           
-          </div>
+
+              {/* // preview rutinas */}
+         
+             
+            {routineForm && routineForm.name.length > 3 &&  (
+                  // {selectedRoutineData && (
+                    <div   className="cardAdmin">
+                      <h2 >Preview de rutina </h2>
+                     
+
+                      <h2>{selectedRoutineData.name}</h2>
+                    {selectedRoutineData.days.map((day, i) => (
+                      <div key={i}>
+                        <h4>📅 {day.day}</h4>
+                        {day.exercises.map((ex, j) => (
+                          <p  key={j}>🏋️
+                          {()=>updateExercise(i, j, "exercise", ex.exercise?.name),console.log("funca",ex.exercise?.name)}
+                            {ex.exercise?.name || "Ejercicio"} → 
+                            {ex.sets} x {ex.reps} aqui
+                          </p>
+                        ))}
+                      </div>
+                    ))}
+                        <button
+                          className="btn-icon danger"
+                          onClick={() => setDays([ { day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine)}>Descartar ❌
+                        </button>
+                    </div>
+                    
+                  )}
+            
+        </div>
+                
+
+
         )}
           
                   
@@ -616,62 +661,7 @@ const deleteRoutine = async (id) => {
           </div>
         )}
 
-        {/* 📊 PROGRESO */}
-        {/* {selectedUserProgress.length > 0 && (
-          
-          <div  style={{width:"700px",textAlign:"center"}}>
-            <h2>Progreso de {selectedUserName}</h2>
-          <div className="cardProgreso">
-
-            {Object.keys(grouped).map((exercise) => (
-              <div style={{background:"#9399a31f",borderRadius:20}} key={exercise}>
-                <h3 style={{padding:20}}>{exercise}</h3>
-                <ProgressChart data={grouped[exercise]} />
-              </div>
-            ))}
-          </div>
-
-            <div 
-    // ref={scrollRef} 
-    className="cardProgreso"
-    style={{ height: '500px', overflowY: 'auto' }}
-  >
-
-    <div className="filtros-calendario" style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-      <input 
-        type="date" 
-        value={fechaInicio} 
-        onChange={(e) => setFechaInicio(e.target.value)} 
-      />
-      <input 
-        type="date" 
-        value={fechaFin} 
-        onChange={(e) => setFechaFin(e.target.value)} 
-      />
-    </div>
-
-
-    {selectedUserProgress
-      .filter(item => {
-        const fechaItem = item.fecha; // Asumiendo que viene como "YYYY-MM-DD"
-        return fechaItem >= fechaInicio && fechaItem <= fechaFin;
-      })
-      .map((progreso, index) => (
-        <div key={index}>
-
-          <p>Día: {progreso.fecha} - Progreso: {progreso.valor}</p>
-        </div>
-      ))
-    }
-  </div>
-
-            <div  className="cardAdmin" style={{width:"700px"}}>
-            <button
-            onClick={()=>setSelectedUserProgress([])}
-            >Ocultar proceso</button>
-            </div>
-          </div>
-        )} */}
+      
 
 {selectedUserProgress.length > 0 && (
   <div style={{ width: "90%", textAlign: "center" }}>
@@ -683,7 +673,7 @@ const deleteRoutine = async (id) => {
       <input 
         type="date" 
         className="btn"
-        value={fechaInicio} 
+        value={(fechaInicio)} 
         onChange={(e) => setFechaInicio(e.target.value)} 
 
       />
@@ -709,7 +699,6 @@ const deleteRoutine = async (id) => {
 
    // 1. Cálculos de Récords y Progreso
   const todosLosPesos = dataFiltrada.map(d => d.weight);
-  console.log("datafiltrada",dataFiltrada)
   const maxHistorico = Math.max(...grouped[exercise].map(d => d.weight)); // Récord de todos los tiempos
   const maxActual = Math.max(...todosLosPesos); // Récord en este rango de fechas
   const ultimoPeso = dataFiltrada[dataFiltrada.length - 1].weight;
