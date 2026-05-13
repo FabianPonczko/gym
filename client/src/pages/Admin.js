@@ -498,6 +498,38 @@ const deleteRoutine = async (id) => {
 
                 </div>
 
+                    {/*  */}
+
+                    {/* {day.exercises.map((ex, exIndex) => {
+  // 1. Forzamos a obtener siempre el ID string limpio
+  const selectValue = ex.exercise && typeof ex.exercise === 'object' 
+    ? ex.exercise._id 
+    : ex.exercise;
+
+  return (
+    <div className="exercise-row" key={exIndex}>
+      {/* SELECT EJERCICIO */}
+      <select
+        value={selectValue || ""} // 2. Usamos el ID limpio o un string vacío
+        onChange={(e) =>
+          updateExercise(dayIndex, exIndex, "exercise", e.target.value)
+        }
+      >
+        <option value="">Elegir ejercicio</option>
+
+        {exercises.map((e) => (
+          <option key={e._id} value={e._id}>
+            {e.name} 
+          </option>
+        ))}
+      </select>
+      
+      {/* Aquí van tus inputs de sets, reps y botón de eliminar */}
+    </div>
+  );
+})} */}
+
+                    {/*  */}
                 {day.exercises.map((ex, exIndex) => (
                   <div className="exercise-row" key={exIndex}>
                     {/* SELECT EJERCICIO */}
@@ -506,12 +538,13 @@ const deleteRoutine = async (id) => {
                       onChange={(e) =>
                         updateExercise(dayIndex, exIndex, "exercise", e.target.value)
                       }
-                    >
+                      >
+                      {console.log("ex.exercise",ex.exercise)}
                       <option value="">Elegir ejercicio</option>
 
                       {exercises.map((e) => (
                         <option key={e._id} value={e._id}>
-                          {e.name}
+                          {e.name} 
                         </option>
                       ))}
                     </select>
@@ -614,7 +647,6 @@ const deleteRoutine = async (id) => {
                         <h4>📅 {day.day}</h4>
                         {day.exercises.map((ex, j) => (
                           <p  key={j}>🏋️
-                          {()=>updateExercise(i, j, "exercise", ex.exercise?.name),console.log("funca",ex.exercise?.name)}
                             {ex.exercise?.name || "Ejercicio"} → 
                             {ex.sets} x {ex.reps} aqui
                           </p>
