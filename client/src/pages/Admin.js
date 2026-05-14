@@ -7,8 +7,9 @@ import Swal from "sweetalert2";
 import LoadingOverlay from "../components/LoadingSpin";
 
 export default function Admin() {
-   const [cargando, setCargando] = useState(false);
-   const [ancho, setAncho] = useState(false);
+  const [cargando, setCargando] = useState(false);
+  const [modificandoRutina, setModificandoRutina] = useState(false);
+  const [ancho, setAncho] = useState(false);
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -67,6 +68,7 @@ const hoy = new Date().toISOString().split('T')[0];
     setAncho(true)
     setSelectedRoutine(id);
     setCargando(true)
+    setModificandoRutina(true)
   try{
     const res = await api.get(`/routines/${id}`);
     setSelectedRoutineData(res.data);
@@ -86,6 +88,21 @@ const hoy = new Date().toISOString().split('T')[0];
   }
 };
 
+const handleDiscard = () => {
+  // 1. Reinicia los días a la estructura inicial
+  setDays([{ day: "Día 1", exercises: [] }]); 
+  
+  // 2. Limpia los datos de la rutina seleccionada
+  setSelectedRoutineData(null); 
+  
+  // 3. Reinicia el valor del select al texto por defecto
+  setSelectedRoutine("Selecciona una rutina"); 
+  
+  // 4. Si usas un estado para el formulario, usa su setter (ejemplo):
+  setRoutineForm({ ...routineForm, name: "" }); 
+
+  setModificandoRutina(false)
+};
 
 
 // eliminar día
@@ -481,7 +498,7 @@ const deleteRoutine = async (id) => {
            <div >
             <div className="cardAdmin">
 
-            <h2>Crear Rutina</h2>
+            <h2>{!modificandoRutina?"Crear Rutina":"Modificando Rutina"} </h2>
             <input
               placeholder="Nombre rutina"
               value={routineForm.name}
@@ -516,12 +533,12 @@ const deleteRoutine = async (id) => {
                         <div className="exercise-row" key={exIndex}>
                           {/* SELECT EJERCICIO */}
                           <select
-                            value={selectValue || ""} // 2. Usamos el ID limpio o un string vacío
+                            value={selectValue || "Elegir ejercicio"} // 2. Usamos el ID limpio o un string vacío
                             onChange={(e) =>
                               updateExercise(dayIndex, exIndex, "exercise", e.target.value)
                             }
                           >
-                            <option value="">Elegir ejercicio</option>
+                            <option disabled value="Elegir ejercicio">Elegir ejercicio</option>
 
                             {exercises?.map((e) => (
                               <option key={e._id} value={e._id}>
@@ -572,10 +589,13 @@ const deleteRoutine = async (id) => {
                   <button className="save-btn" onClick={createRoutine}>
                     💾 Guardar rutina
                   </button>
-                   <button
-                        className="btn-icon danger"
-                        onClick={() => deleteRoutine(selectedRoutineData._id)}>🗑️
-                      </button>
+                   
+                   {modificandoRutina && selectedRoutine !="Selecciona una rutina" &&(
+                      <button 
+                      className="btn-icon danger"
+                      onClick={() => deleteRoutine(selectedRoutineData._id)}>🗑️ Borrar Rutina
+                        </button>
+                    )}
                 </div>
 
           </div>
@@ -585,15 +605,16 @@ const deleteRoutine = async (id) => {
 
             <div className="cardAdmin">
                 <h2>Modificar Rutinas</h2> 
-                <select onChange={(e) => handleSelectRoutine(e.target.value)}>
-                  <option value="">Selecciona una rutina</option>
-                  {routines.map(r => (          
-                    <option key={r._id} value={r._id}>{r.name}</option>
-                  ))}
+                <select value={selectedRoutine || "Selecciona una rutina"}
+                onChange={(e) => handleSelectRoutine(e.target.value)}>
+                  <option disabled value="Selecciona una rutina">Selecciona una rutina</option>
+                    {routines.map(r => (          
+                      <option key={r._id} value={r._id}>{r.name}</option>
+                    ))}
                 </select>
                 <button
                   className="btn-icon danger"
-                  onClick={() => setDays([ { day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine)}>Descartar ❌
+                  onClick={handleDiscard}>Descartar ❌
                 </button>
                 
                 {/* {selectedRoutineData && routines.some(r => r._id === selectedRoutineData._id) && (
