@@ -279,7 +279,7 @@ const removeExercise = (dayIndex, exIndex) => {
   };
 
 const deleteRoutine = async (id) => {
-  const result = await Swal.fire({
+    const result = await Swal.fire({
     title: "¿Eliminar rutina?",
     text: "Esta acción no se puede deshacer",
     icon: "warning",
@@ -293,6 +293,7 @@ const deleteRoutine = async (id) => {
 
   if (result.isConfirmed) {
     await api.delete(`/routines/${id}`);
+    
 
     Swal.fire({
       icon: "success",
@@ -301,6 +302,7 @@ const deleteRoutine = async (id) => {
       timer: 1500,
       showConfirmButton: false
     });
+    setDays([{ day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine);
 
     // 🔥 actualizar UI
     fetchRoutines();
@@ -547,7 +549,7 @@ const deleteRoutine = async (id) => {
                             }
                           />
                           {/* DELETE */}
-                          <button style={{background: "linear-gradient(135deg, #915c5c, #9f2332)"}}
+                          <button style={{background: "linear-gradient(135deg, #925f5f, #9f2332)"}}
                             onClick={() => removeExercise(dayIndex, exIndex)}
                           >
                             Borrar ejercicio 🗑️
@@ -570,6 +572,10 @@ const deleteRoutine = async (id) => {
                   <button className="save-btn" onClick={createRoutine}>
                     💾 Guardar rutina
                   </button>
+                   <button
+                        className="btn-icon danger"
+                        onClick={() => deleteRoutine(selectedRoutineData._id)}>🗑️
+                      </button>
                 </div>
 
           </div>
