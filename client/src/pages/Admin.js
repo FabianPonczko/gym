@@ -58,6 +58,7 @@ const hoy = new Date().toISOString().split('T')[0];
   const handleTabChange = (newTab) => {
   setTab(newTab);
   setSelectedUserProgress([])
+  setModificandoRutina(false)
   // 🔥 limpiar selección cuando entrás a rutinas
   // setDays([ { day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine)
   handleDiscard()
@@ -276,6 +277,25 @@ const removeExercise = (dayIndex, exIndex) => {
     // 🔥 resetear formulario
     setRoutineForm({ name: "", description: "", exercises: "" });
     setDays([{ day: "Día 1", exercises: [] }]);
+};
+  
+  const updateRutine = async (routineId) => {
+    await api.put(`/routines/${routineId}`, {
+      name: routineForm.name,
+      description: routineForm.description,
+      days
+    });
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Rutina cargada",
+      showConfirmButton: false,
+      timer: 1500
+    });
+   fetchRoutines();
+
+   // 🔥 limpiar selección (ESTO TE FALTA)
+   handleDiscard()
 };
 
   // 🔗 ASIGNAR
@@ -590,10 +610,18 @@ const deleteRoutine = async (id) => {
                 <div style={{marginTop:20}}>
                   <button onClick={addDay}>+ Día</button>
 
+                  {!modificandoRutina
+                  ?
+                  routineForm.name &&
                   <button className="save-btn" onClick={createRoutine}>
-                    💾 Guardar rutina
+                    💾 Guardar rutina {routineForm.name}
                   </button>
-                   
+                  :
+                  <button className="save-btn" onClick={()=>updateRutine(selectedRoutine)}>
+                    💾 Actualizar rutina 
+                  </button>
+                  }
+
                    {modificandoRutina && selectedRoutine !="Selecciona una rutina" &&(
                       <button 
                       className="btn-icon danger"
