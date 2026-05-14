@@ -34,6 +34,8 @@ export default function Admin() {
     description: "",
     exercises: ""
   });
+
+
 const convertirAISO = (fechaStr) => {
   const [dia, mes, anio] = fechaStr.split('-');
   return `${dia}/${mes}/${anio}`;
@@ -57,7 +59,8 @@ const hoy = new Date().toISOString().split('T')[0];
   setTab(newTab);
   setSelectedUserProgress([])
   // 🔥 limpiar selección cuando entrás a rutinas
-  setDays([ { day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine)
+  // setDays([ { day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine)
+  handleDiscard()
   if (newTab !== "routines") {
     setSelectedRoutine("");
     setSelectedRoutineData(null);
@@ -509,7 +512,7 @@ const deleteRoutine = async (id) => {
 
             {days.map((day, dayIndex) => (
             <div >
-              <div className="day-card" key={dayIndex}>
+              <div className="day-card" style={{background: dayIndex % 2==0?"#114ab415":"#3e32683f",marginBottom:"15px"}} key={dayIndex}>
 
                 <div className="day-header">
                   <h3>{day.day}</h3>
@@ -532,6 +535,7 @@ const deleteRoutine = async (id) => {
                     return (
                         <div className="exercise-row" key={exIndex}>
                           {/* SELECT EJERCICIO */}
+                          <p style={{fontFamily:"italic", fontSize:"12px"}}>Ejercicio {exIndex +1} </p>
                           <select
                             value={selectValue || "Elegir ejercicio"} // 2. Usamos el ID limpio o un string vacío
                             onChange={(e) =>
@@ -688,7 +692,7 @@ const deleteRoutine = async (id) => {
 
             <select onChange={(e) => setSelectedUser(e.target.value)}>
               <option value="">Usuario</option>
-              {users.map(u => (
+              {users.filter(p=>p.role==="client").map(u => (
                 <option key={u._id} value={u._id}>{u.name}</option>
               ))}
             </select>
@@ -778,7 +782,8 @@ const deleteRoutine = async (id) => {
 
       {/* Historial rápido (horizontal scroll) */}
       <div style={styles.historyList}>
-        {dataFiltrada.slice(-5).map((log, i) => (
+        {console.log("datafiltrada",dataFiltrada)}
+        {dataFiltrada.slice(0,5).map((log, i) => (
           <div key={i} style={styles.historyItem}>
             <span style={styles.dateLabel}>
               {new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
