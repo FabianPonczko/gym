@@ -6,6 +6,8 @@ import "./admin.css";
 import Swal from "sweetalert2";
 import LoadingOverlay from "../components/LoadingSpin";
 
+
+
 export default function Admin() {
   const [cargando, setCargando] = useState(false);
   const [modificandoRutina, setModificandoRutina] = useState(false);
@@ -90,6 +92,42 @@ const hoy = new Date().toISOString().split('T')[0];
   }finally{
     setCargando(false)
   }
+};
+
+const moveExercise = (
+  dayIndex,
+  exIndex,
+  direction
+) => {
+
+  const updatedDays =
+    [...days];
+
+  const exercises =
+    updatedDays[dayIndex]
+      .exercises;
+
+  const newIndex =
+    direction === "up"
+      ? exIndex - 1
+      : exIndex + 1;
+
+  if (
+    newIndex < 0 ||
+    newIndex >= exercises.length
+  ) {
+    return;
+  }
+
+  [
+    exercises[exIndex],
+    exercises[newIndex]
+  ] = [
+    exercises[newIndex],
+    exercises[exIndex]
+  ];
+
+  setDays(updatedDays);
 };
 
 const handleDiscard = () => {
@@ -553,8 +591,37 @@ const deleteRoutine = async (id) => {
                     : ex.exercise;
 
                     return (
+                        
                         <div className="exercise-row" key={exIndex}>
                           {/* SELECT EJERCICIO */}
+                          <div className="btn-updown">
+
+                            <button 
+                              onClick={() =>
+                                moveExercise(
+                                  dayIndex,
+                                  exIndex,
+                                  "up"
+                                )
+                              }
+                            >
+                              ⬆
+                            </button>
+
+                            <button 
+                              onClick={() =>
+                                moveExercise(
+                                  dayIndex,
+                                  exIndex,
+                                  "down"
+                                )
+                              }
+                             
+                            >
+                              ⬇
+                            </button>
+
+                          </div>
                           <p style={{fontFamily:"italic", fontSize:"12px"}}>Ejercicio {exIndex +1} </p>
                           <select
                             value={selectValue || "Elegir ejercicio"} // 2. Usamos el ID limpio o un string vacío

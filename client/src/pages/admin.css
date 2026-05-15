@@ -323,3 +323,26 @@
   border:Solid 1px #a7a8aa20;
   margin: 30px;
 } 
+
+.btn-updown{
+  display: flex;
+  justify-content: flex-end;
+  height: 1px;
+  width: 100%;
+  }
+
+.btn-updown button{
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  height: 55px;
+  margin-top: -10px;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #94a3b8;
+  }
+
+    
+.btn-updown button:hover{
+  transform: scale(1.4);  
+}
