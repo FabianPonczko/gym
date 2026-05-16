@@ -52,8 +52,8 @@
 /* ===== CONTENT ===== */
 .content {
   flex: 1;
-  /* padding: 10px; */
-  margin-left: 10px;
+  padding: 10px;
+  margin-left: 0px;
   overflow-y: auto;
   justify-items: flex-start;
   gap: initial;
@@ -400,6 +400,10 @@
     gap: 10px;
   }
 
+  .content {
+    justify-items: center;
+   width: 100vw;
+  }
   .cardAdmin{
     width: 100%;
   }
@@ -410,5 +414,11 @@
   .sidebarAdmin.open {
 
     right: 0;
+  }
+  .btn-updown{
+  display: flex;
+  justify-content: flex-end;
+  height: 1px;
+  width: 110%;
   }
 }

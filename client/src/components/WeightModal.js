@@ -24,7 +24,7 @@ export default function WeightModal({ exercise, onClose, onSave }) {
 
         <input
           type="number"
-          placeholder="Peso (kg)"
+          placeholder="Peso"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
         />
