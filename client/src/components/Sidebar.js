@@ -10,8 +10,9 @@ export default function Sidebar() {
   } catch {}
 
   return (
-    <div className="sidebar">
-      <h2>🏋️ GymApp</h2>
+    // <div className="sidebar">
+    <>
+    <h2>🏋️ GymApp</h2>
 
       <Link to="/dashboard">Dashboard</Link>
 
@@ -29,6 +30,7 @@ export default function Sidebar() {
       }}>
         Logout
       </button>
-    </div>
+      </>
+    // </div>
   );
 }

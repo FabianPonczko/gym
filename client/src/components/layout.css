@@ -2,11 +2,64 @@
   display: flex;
   
 }
+.menu-btn {
 
+  display: none;
+}
 .main {
   flex: 1;
   padding: 2px;
   background: #0f172a;
   min-height: 100vh;
   color: white;
+}
+@media (max-width: 768px) {
+
+  .menu-btn {
+
+    display: block;
+
+    position: fixed;
+
+    top: 15px;
+    left: 15px;
+
+    z-index: 1001;
+
+    background: #0f172a;
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 14px;
+
+    border-radius: 10px;
+  }
+
+  .sidebar {
+
+    position: fixed;
+
+    top: 0;
+    left: -250px;
+
+    width: 220px;
+
+    height: 100dvh;
+
+    z-index: 800;
+
+    transition: 0.3s;
+  }
+
+  .sidebar.open {
+
+    left: 0;
+  }
+
+  .main {
+
+    width: 100%;
+  }
 }

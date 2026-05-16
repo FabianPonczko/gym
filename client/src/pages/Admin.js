@@ -10,6 +10,7 @@ import LoadingOverlay from "../components/LoadingSpin";
 
 export default function Admin() {
   const [cargando, setCargando] = useState(false);
+  const [openAdmin, setOpenAdmin] = useState(false);
   const [modificandoRutina, setModificandoRutina] = useState(false);
   const [ancho, setAncho] = useState(false);
   const [users, setUsers] = useState([]);
@@ -68,6 +69,11 @@ const hoy = new Date().toISOString().split('T')[0];
     setSelectedRoutine("");
     setSelectedRoutineData(null);
   }
+  setTimeout(() => {
+
+    setOpenAdmin(false);
+
+  }, 300);
 };
 
   const handleSelectRoutine = async (id) => {
@@ -426,12 +432,73 @@ const deleteRoutine = async (id) => {
     <div className="admin-container">
 
       {/* SIDEBAR */}
-      <div className="sidebarAdmin">
+
+      <button
+          className="menu-admin-btn"
+          onClick={() =>
+            setOpenAdmin(!openAdmin)
+          }
+      >
+          ☰
+      </button>
+
+      {/* <div className="sidebarAdmin">
         <h2>🏋️ Admin</h2>
           <button onClick={() => handleTabChange("users")} className={tab==="users" ? "active" : ""}>👤 Usuarios</button>
           <button onClick={() => handleTabChange("routines")} className={tab==="routines" ? "active" : ""}>🏋️ Rutinas</button>
           <button onClick={() => handleTabChange("assign")} className={tab==="assign" ? "active" : ""}>🔗 Asignar</button>
-      </div>
+      </div> */}
+
+        <div
+  className={`sidebarAdmin ${
+    openAdmin ? "open" : ""
+  }`}
+>
+
+  <h2>🏋️ Admin</h2>
+
+  <button
+    onClick={() =>
+      handleTabChange("users")
+    }
+    className={
+      tab === "users"
+        ? "active"
+        : ""
+    }
+  >
+    👤 Usuarios
+  </button>
+
+  <button
+    onClick={() =>
+      handleTabChange("routines")
+    }
+    className={
+      tab === "routines"
+        ? "active"
+        : ""
+    }
+  >
+    🏋️ Rutinas
+  </button>
+
+  <button
+    onClick={() =>
+      handleTabChange("assign")
+    }
+    className={
+      tab === "assign"
+        ? "active"
+        : ""
+    }
+  >
+    🔗 Asignar
+  </button>
+
+</div>
+
+
 
       {/* CONTENT */}
       <div className="content">
