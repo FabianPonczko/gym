@@ -400,10 +400,12 @@
     gap: 10px;
   }
 
-  .content {
+  .content .content-rutinas  {
+    justify-content: center;
     justify-items: center;
    width: 100vw;
   }
+  
   .cardAdmin{
     width: 100%;
   }

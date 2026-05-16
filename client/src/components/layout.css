@@ -33,14 +33,13 @@
     border: none;
 
     padding: 10px 14px;
-
     border-radius: 10px;
   }
 
   .sidebar {
 
     position: fixed;
-
+     
     top: 0;
     left: -250px;
 
@@ -54,12 +53,10 @@
   }
 
   .sidebar.open {
-
     left: 0;
   }
 
   .main {
-
     width: 100%;
   }
 }

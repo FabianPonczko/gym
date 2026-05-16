@@ -40,23 +40,23 @@ body {
   align-items: start; /* 👈 clave */
 }
 
-.card {
-  background: #213323;
+.cardDashboard {
+  background: #181e2e;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(17, 16, 7, 0.3);
   transition: 0.2s;
 }
 
-.card:hover {
+.cardDashboard:hover {
   transform: scale(1.03);
 }
 
-.card h3 {
+.cardDashboard h3 {
   margin-bottom: 10px;
 }
 
-.card button {
+.cardDashboard button {
   margin-top: 10px;
   padding: 10px;
   border: none;
@@ -67,7 +67,7 @@ body {
   width: 100%;
 }
 
-.card button:hover {
+.cardDashboard   button:hover {
   background: #0ea5e9;
 }
 select, button {
@@ -113,11 +113,12 @@ select, button {
 
 /* nuevo*/
 
-.days-container {
+.days-container-dashboard  {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-bottom: 20px;
   
 }
 
@@ -130,7 +131,7 @@ select, button {
   border-radius: 20px;
   border: 1px solid #515a68;
   width: 90%;
-  
+  margin-bottom: 20px;
 }
 
 .day-card h2 {

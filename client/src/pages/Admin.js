@@ -177,6 +177,22 @@ const removeExercise = (dayIndex, exIndex) => {
     fetchExercises();
     
   }, []);
+  useEffect(() => {
+
+  if (openAdmin) {
+
+    const timer =
+      setTimeout(() => {
+
+        setOpenAdmin(false);
+
+      }, 4000);
+
+    return () =>
+      clearTimeout(timer);
+  }
+
+}, [openAdmin]);
  
  
   const fetchExercises = async () => {
@@ -433,70 +449,63 @@ const deleteRoutine = async (id) => {
 
       {/* SIDEBAR */}
 
-      <button
-          className="menu-admin-btn"
-          onClick={() =>
-            setOpenAdmin(!openAdmin)
-          }
-      >
-          ☰
-      </button>
-
-      {/* <div className="sidebarAdmin">
-        <h2>🏋️ Admin</h2>
-          <button onClick={() => handleTabChange("users")} className={tab==="users" ? "active" : ""}>👤 Usuarios</button>
-          <button onClick={() => handleTabChange("routines")} className={tab==="routines" ? "active" : ""}>🏋️ Rutinas</button>
-          <button onClick={() => handleTabChange("assign")} className={tab==="assign" ? "active" : ""}>🔗 Asignar</button>
-      </div> */}
+        <button style={{ visibility: openAdmin ? "hidden" : "visible" }}
+            className="menu-admin-btn"
+            onClick={() =>
+              setOpenAdmin(!openAdmin)
+            }
+        >
+            ☰
+        </button>
 
         <div
-  className={`sidebarAdmin ${
-    openAdmin ? "open" : ""
-  }`}
->
+          className={`sidebarAdmin ${
+            openAdmin ? "open" : ""
+          }`}
+        >
 
-  <h2>🏋️ Admin</h2>
+        <h2>🏋️ Admin</h2>
 
-  <button
-    onClick={() =>
-      handleTabChange("users")
-    }
-    className={
-      tab === "users"
-        ? "active"
-        : ""
-    }
-  >
-    👤 Usuarios
-  </button>
+        <button
+          onClick={() =>
+            handleTabChange("users")
+          }
+          className={
+            tab === "users"
+              ? "active"
+              : ""
+          }
+        >
+          👤 Usuarios
+        </button>
 
-  <button
-    onClick={() =>
-      handleTabChange("routines")
-    }
-    className={
-      tab === "routines"
-        ? "active"
-        : ""
-    }
-  >
-    🏋️ Rutinas
-  </button>
+        <button
+          onClick={() =>
+            handleTabChange("routines")
+          }
+          className={
+            tab === "routines"
+              ? "active"
+              : ""
+          }
+        >
+          🏋️ Rutinas
+        </button>
 
-  <button
-    onClick={() =>
-      handleTabChange("assign")
-    }
-    className={
-      tab === "assign"
-        ? "active"
-        : ""
-    }
-  >
-    🔗 Asignar
-  </button>
+        <button
+          onClick={() =>
+            handleTabChange("assign")
+          }
+          className={
+            tab === "assign"
+              ? "active"
+              : ""
+          }
+        >
+          🔗 Asignar
+        </button>
 
-</div>
+      </div>
 
 
 
@@ -530,17 +539,7 @@ const deleteRoutine = async (id) => {
             <button onClick={createUser}>Crear</button>
 
             <h2 style={{marginTop:20}}>Lista de usuarios</h2>
-
-            {/* {users.map(u => (
-              <div className="user-row" key={u._id}>
-                <span>{u.name} - {u.email}</span>
-                <span>{u.routine?.name || "Sin rutina"}</span>
-
-                <button onClick={() => fetchUserProgress(u._id, u.name)}>
-                  📊
-                </button>
-              </div>
-            ))} */}
+         
             <input
               placeholder="Buscar usuario..."
               className="search"
@@ -783,60 +782,13 @@ const deleteRoutine = async (id) => {
                   onClick={handleDiscard}>Descartar ❌
                 </button>
                 
-                {/* {selectedRoutineData && routines.some(r => r._id === selectedRoutineData._id) && (
-                // {selectedRoutineData && (
-                  <div className="">
-                    <h2>{selectedRoutineData.name}</h2>
-                    {selectedRoutineData.days.map((day, dayIndex) => (
-                      <div key={dayIndex}>
-                        <h4>📅 {day.day}</h4>
-                        {day.exercises.map((ex, exIndex) => (
-                          <p  key={exIndex}>🏋️
-                            {ex.exercise?.name || "Ejercicio"} → 
-                            {ex.sets} x {ex.reps} 
-                          </p>
-                        ))}
-                      </div>
-                    ))}
-                      <button
-                        className="btn-icon danger"
-                        onClick={() => deleteRoutine(selectedRoutineData._id)}>🗑️
-                      </button>
-                  </div>
-                  
-                )} */}
+              
             </div>    
 
           </div>      
           
 
-              {/* // preview rutinas */}
-         
              
-            {/* {routineForm && routineForm.name.length > 3 &&  (
-                  // {selectedRoutineData && (
-                    <div   className="cardAdmin">
-                      <h2 >Preview de rutina </h2>
-
-                      <h2>{selectedRoutineData.name}</h2>
-                    {days?.map((day, i) => (
-                      <div key={i}>
-                        <h4>📅 {day.day}</h4>
-                        {day.exercises.map((ex, j) => (
-                          <p  key={j}>🏋️
-                            {ex.exercise?.name || "Ejercicio"} → 
-                            {ex.sets} x {ex.reps} aqui
-                          </p>
-                        ))}
-                      </div>
-                    ))}
-                        <button
-                          className="btn-icon danger"
-                          onClick={() => setDays([ { day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine)}>Descartar ❌
-                        </button>
-                    </div>
-                    
-                  )} */}
             
         </div>
                 

@@ -8,13 +8,13 @@ export default function Layout({ children }) {
    useEffect(() => {
 
     if (open) {
-
+      
       const timer =
         setTimeout(() => {
 
           setOpen(false);
 
-        }, 4000);
+        }, 3000);
 
       return () =>
         clearTimeout(timer);
@@ -24,7 +24,7 @@ export default function Layout({ children }) {
 
   return (
     <div className="app">
-      <button
+      <button style={{ visibility: open ? "hidden" : "visible" }}
         className="menu-btn"
         onClick={() => setOpen(!open)}
         > 

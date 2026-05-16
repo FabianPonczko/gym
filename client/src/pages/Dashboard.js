@@ -59,22 +59,29 @@ export default function Dashboard() {
   
          
   const fetchHistory = async (exercise) => {
-    
-    const res = await api.get(`/progress/by-exercise?exercise=${exercise}`);
-  if (history[exercise]) {
-      setHistory(prev => {
-        const copy = { ...prev };
-        delete copy[exercise];
-        return copy;
-      });
-      return;
-    }
+    setCargando(true)
+    try{
+
+      const res = await api.get(`/progress/by-exercise?exercise=${exercise}`);
+      if (history[exercise]) {
+        setHistory(prev => {
+          const copy = { ...prev };
+          delete copy[exercise];
+          return copy;
+        });
+        return;
+      }
       setHistory(prev => ({
         ...prev,
         [exercise]: res.data
       }));
+    }catch(err){
+      console.log(err); 
+    }finally{
+      setCargando(false);
     };
- 
+  };
+  
   const toggleRecommendation = async (exercise) => {
   // 👉 si ya existe → ocultar
   if (recommendations[exercise]) {
@@ -127,48 +134,7 @@ const adjustRoutine = async () => {
         <h1 className="title">🏋️ Mi Rutina</h1>
         {routine ? (
           <>
-        {/* <h2 className="routine-name">{routine.name}</h2> */}
-            {/* <button onClick={adjustRoutine}>
-              🤖 Ajustar rutina automáticamente
-            </button> */}
-            {/* <div className="grid">
-              {routine.exercises.map((ex, i) => (
-                <div className="card" key={i}>
-                  <h3>{ex.name}</h3>
-                  <p>{ex.sets} x {ex.reps} - {ex.weight} kg</p>
-
-                  <button onClick={() => abrirModal(ex.name)}>
-                    Registrar peso
-                  </button>
-                  <button onClick={() => fetchHistory(ex.name)}
-                     className={`btn-rec ${
-                       history[ex.name]  ? "hide" : "show"
-                      }`}>
-                        {history[ex.name]  ? "❌ Ocultar historial" : "💡 Ver historial"}
-                       </button>
-                  {history[ex.name]?.map((h, i) => (
-                    <p key={i}>
-                      {h.weight}kg x {h.reps} - {new Date(h.date).toLocaleDateString()}
-                    </p>
-                  ))}
-                  <button
-                  onClick={() => toggleRecommendation(ex.name)}
-                  className={`btn-rec ${
-                    recommendations[ex.name] ? "hide" : "show"
-                  }`}
-                >
-                  {recommendations[ex.name] ? "❌ Ocultar recomendación" : "💡 Ver recomendación"}
-                </button>
-                  {recommendations[ex.name] && (
-                  <p>
-                     <RecommendationCard data={recommendations[ex.name]} />
-                  </p>
-                  )}
-                
-                </div>
-              ))}
-            </div> */}
-            <div className="days-container">
+            <div className="days-container-dashboard">
               {routine.days.map((day, dayIndex) => (
                 <div className="day-card" key={dayIndex}>
                   <h2>{day.day}</h2>
@@ -176,7 +142,7 @@ const adjustRoutine = async () => {
                     {day.exercises.map((item, i) => {
                       const ex = item.exercise || item;
                       return (
-                        <div className="card" key={i}>
+                        <div className="cardDashboard" key={i}>
 
                         <h3>{ex.name}</h3>
 
