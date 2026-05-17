@@ -49,6 +49,26 @@ export const getProgressByExercise = async (req, res) => {
   res.json(data);
 };
 
+export const deleteProgressByExercise = async (req, res) => {
+    try {
+      const { exercise } = req.params;
+      await Progress.deleteMany({
+        user: req.user.id,
+        exercise
+      });
+
+      res.json({
+        msg:
+          "Historial eliminado"
+      });
+
+    } catch (err) {
+      res.status(500).json({
+        msg: "Error"
+      });
+    }
+};
+
 // 👉 progreso de un usuario (para coach)
 export const getUserProgress = async (req, res) => {
   const { userId } = req.params;
