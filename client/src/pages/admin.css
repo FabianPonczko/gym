@@ -61,10 +61,22 @@
 
 .content-rutinas{
   display: flex;
+  flex-direction: column;
+  justify-content: center; 
 }
 
 /* ===== CARD ===== */
 .cardAdmin {
+  margin: 10px;
+  background: #b9c4d41f;
+  padding: 20px;
+  border-radius: 5px;
+  width: 450PX;
+  text-align: center;
+}
+ 
+.cardGraficos {
+  
   margin: 10px;
   background: #b9c4d41f;
   padding: 20px;
@@ -106,6 +118,14 @@
 .cardAdmin button:hover {
   transform: scale(1.01);
 }
+
+.day-card {
+  padding: 10px;
+  border-radius: 15px;
+  border:Solid 1px #a7a8aa20;
+  margin-bottom: 15px;
+  width: 100%;
+} 
 
 .cardProgreso {
   display: grid;

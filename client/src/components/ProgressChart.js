@@ -18,7 +18,7 @@ export default function ProgressChart({ data }) {
   
 
   return (
-    <div style={{ width: "100%", height: 150 }}>
+    <div style={{ width: "80%", height: 150 }}>
       <ResponsiveContainer>
         <LineChart data={formatted}>
           <XAxis dataKey="date" />

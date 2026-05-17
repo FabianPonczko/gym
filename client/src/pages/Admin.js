@@ -10,6 +10,7 @@ import LoadingOverlay from "../components/LoadingSpin";
 
 export default function Admin() {
   const [cargando, setCargando] = useState(false);
+ const [openChart, setOpenChart] =  useState(null);
   const [openAdmin, setOpenAdmin] = useState(false);
   const [modificandoRutina, setModificandoRutina] = useState(false);
   const [ancho, setAncho] = useState(false);
@@ -511,11 +512,12 @@ const deleteRoutine = async (id) => {
               onChange={e => setUserForm({ ...userForm, role: e.target.value })}>
               <option value="">Rol</option>
               <option value="client">Cliente</option>
-              <option value="coach">Coach</option>
-              <option value="admin">Admin</option>
+              <option disabledvalue="coach">Coach</option>
+              <option disabled value="admin">Admin</option>
             </select>
 
             <button onClick={createUser}>Crear</button>
+
 
             <h2 style={{marginTop:20}}>Lista de usuarios</h2>
          
@@ -614,7 +616,7 @@ const deleteRoutine = async (id) => {
                 />
 
                 {days.map((day, dayIndex) => (
-                <div >
+                
                   <div className="day-card" style={{background: dayIndex % 2==0?"#114ab415":"#57498a3f",marginBottom:"15px"}} key={dayIndex}>
 
                     <div className="day-header">
@@ -716,7 +718,7 @@ const deleteRoutine = async (id) => {
                           </button>
 
                     </div>
-                </div>
+                
                 ))}
 
                 <div style={{marginTop:20}}>
@@ -825,67 +827,90 @@ const deleteRoutine = async (id) => {
 
 
     {Object.keys(grouped).map((exercise) => {
-  const dataFiltrada = grouped[exercise].filter(item => {
-    const fechaISO = item.date.split('T')[0];
-    return fechaISO >= fechaInicio && fechaISO <= fechaFin;
-  });
+        const dataFiltrada = grouped[exercise].filter(item => {
+        const fechaISO = item.date.split('T')[0];
+        return fechaISO >= fechaInicio && fechaISO <= fechaFin;
+        });
 
-  if (dataFiltrada.length === 0) return null;
+        if (dataFiltrada.length === 0) return null;
 
-   // 1. Cálculos de Récords y Progreso
-  const todosLosPesos = dataFiltrada.map(d => d.weight);
-  const maxHistorico = Math.max(...grouped[exercise].map(d => d.weight)); // Récord de todos los tiempos
-  const maxActual = Math.max(...todosLosPesos); // Récord en este rango de fechas
-  const ultimoPeso = dataFiltrada[dataFiltrada.length - 1].weight;
+        // 1. Cálculos de Récords y Progreso
+        const todosLosPesos = dataFiltrada.map(d => d.weight);
+        const maxHistorico = Math.max(...grouped[exercise].map(d => d.weight)); // Récord de todos los tiempos
+        const maxActual = Math.max(...todosLosPesos); // Récord en este rango de fechas
+        const ultimoPeso = dataFiltrada[dataFiltrada.length - 1].weight;
   
-  // % de progreso respecto al récord histórico
-  const porcentajePR = Math.min((ultimoPeso / maxHistorico) * 100, 100);
+        // % de progreso respecto al récord histórico
+        const porcentajePR = Math.min((ultimoPeso / maxHistorico) * 100, 100);
 
-  return (
-    <div key={exercise} style={styles.exerciseCard}>
-      {/* Cabecera con nombre y récord */}
-      <div style={styles.header}>
-        <div style={{ textAlign: 'left' }}>
-          <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{exercise}</h3>
-          <span style={{ fontSize: '0.8rem', color: '#9ca3af' }}>Récord Personal: {maxHistorico}kg</span>
-        </div>
-        <div style={styles.badgePR}>
-           {ultimoPeso} <small>kg actuales</small>
-        </div>
-      </div>
+        return (
+          <div key={exercise} style={styles.exerciseCard}
+          onClick={() =>
+            setOpenChart(
+            openChart === exercise
+            ? null
+            : exercise
+          )
+         }
+          >
+            {/* Cabecera con nombre y récord */}
+            <div style={styles.header}>
+              <div style={{ textAlign: 'left' }}>
+                <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{exercise}</h3>
+                <span style={{ fontSize: '0.8rem', color: '#9ca3af' }}>Récord Personal: {maxHistorico}kg</span>
+              </div>
+              <div style={styles.badgePR}>
+                {ultimoPeso} <small>kg actuales</small>
+              </div>
 
-      {/* 📊 BARRA DE PROGRESO VISUAL */}
-      <div style={styles.progressContainer}>
-        <div style={styles.progressBarBackground}>
-          <div style={{ ...styles.progressBarFill, width: `${porcentajePR}%` }}>
-            {porcentajePR === 100 && <span style={styles.prStar}>⭐ ¡Récord!</span>}
+             
+
+            </div>
+              
+              {openChart === exercise && (
+                <div>
+                  <ProgressChart
+                    data={dataFiltrada.slice(0,5).sort(
+                      (a, b) =>
+                        new Date(a.date) -
+                        new Date(b.date)
+                    )}
+                  />
+                </div>
+              )}
+              
+
+            {/* 📊 BARRA DE PROGRESO VISUAL */}
+            <div style={styles.progressContainer}>
+                <div style={styles.progressBarBackground}>
+                  <div style={{ ...styles.progressBarFill, width: `${porcentajePR}%` }}>
+                    {porcentajePR === 100 && <span style={styles.prStar}>⭐ ¡Récord!</span>}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px', fontSize: '0.75rem' }}>
+                  <span style={{ color: '#9ca3af' }}>0kg</span>
+                  <span style={{ color: '#fff', fontWeight: 'bold' }}>{porcentajePR.toFixed(0)}% del PR</span>
+                  <span style={{ color: '#9ca3af' }}>{maxHistorico}kg</span>
+                </div>
+              </div>
+
+            {/* Historial rápido (horizontal scroll) */}
+            <div style={styles.historyList}>
+              {console.log("datafiltrada",dataFiltrada)}
+              {dataFiltrada.slice(0,5).map((log, i) => (
+                <div key={i} style={styles.historyItem}>
+                  <span style={styles.dateLabel}>
+                    {new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+                  </span>
+                  <span style={styles.valueLabel}>  {log.weight} kg</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px', fontSize: '0.75rem' }}>
-          <span style={{ color: '#9ca3af' }}>0kg</span>
-          <span style={{ color: '#fff', fontWeight: 'bold' }}>{porcentajePR.toFixed(0)}% del PR</span>
-          <span style={{ color: '#9ca3af' }}>{maxHistorico}kg</span>
-        </div>
-      </div>
-
-      {/* Historial rápido (horizontal scroll) */}
-      <div style={styles.historyList}>
-        {console.log("datafiltrada",dataFiltrada)}
-        {dataFiltrada.slice(0,5).map((log, i) => (
-          <div key={i} style={styles.historyItem}>
-            <span style={styles.dateLabel}>
-              {new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
-            </span>
-            <span style={styles.valueLabel}>  {log.weight} kg</span>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 })}
 
-
-
+       
 
 
 
