@@ -17,32 +17,62 @@ export default function WeightModal({ exercise, onClose, onSave }) {
     onClose();
   };
 
-  return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h2>{exercise}:</h2>
+ return (
+
+  <div className="modal-overlayPeso">
+
+    <div className="modalPeso">
+
+      <h2>{exercise}:</h2>
+
+      <form
+        onSubmit={(e) => {
+
+          e.preventDefault();
+
+          handleSubmit();
+        }}
+      >
 
         <input
           type="number"
           placeholder="Peso"
           value={weight}
-          onChange={(e) => setWeight(e.target.value)}
+          onChange={(e) =>
+            setWeight(e.target.value)
+          }
         />
 
         <input
           type="number"
           placeholder="Reps"
           value={reps}
-          onChange={(e) => setReps(e.target.value)}
+          onChange={(e) =>
+            setReps(e.target.value)
+          }
         />
 
         <div className="modal-buttons">
-          <button onClick={handleSubmit}>Guardar</button>
-          <button className="cancel" onClick={onClose}>
+
+          <button type="submit">
+            Guardar
+          </button>
+
+          <button
+            type="button"
+            className="cancel"
+            onClick={onClose}
+          >
             Cancelar
           </button>
+
         </div>
-      </div>
+
+      </form>
+
     </div>
-  );
+
+  </div>
+);
 }
+

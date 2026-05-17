@@ -401,13 +401,28 @@
   }
 
   .content .content-rutinas  {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     justify-items: center;
-   width: 100vw;
+    width: 100%;
+  }
+
+  .content-progreso {
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
+    width: 100%;
+  }   
+
+  .day-card {
+    width: 100%;
   }
   
   .cardAdmin{
-    width: 100%;
+    width: 95%;
   }
   .cardProgreso{
   display: flex;    

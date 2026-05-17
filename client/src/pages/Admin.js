@@ -293,28 +293,7 @@ const removeExercise = (dayIndex, exIndex) => {
     }
   };
 
-  // 🏋️ CREAR RUTINA
-  // const createRoutine = async () => {
-  //   try {
-  //     const exercisesArray = routineForm.exercises.split(",").map(e => ({
-  //       name: e.trim(),
-  //       sets: 3,
-  //       reps: 10
-  //     }));
-
-  //     await api.post("/routines", {
-  //       name: routineForm.name,
-  //       description: routineForm.description,
-  //       exercises: exercisesArray
-  //     });
-
-  //     alert("Rutina creada 💪");
-  //     setRoutineForm({ name: "", description: "", exercises: "" });
-  //     fetchRoutines();
-  //   } catch (err) {
-  //       alert("Error creando rutina");
-  //   }
-  // };
+  
   const createRoutine = async () => {
   await api.post("/routines", {
     name: routineForm.name,
@@ -348,7 +327,7 @@ const removeExercise = (dayIndex, exIndex) => {
     Swal.fire({
       position: "top-end",
       icon: "success",
-      title: "Rutina cargada",
+      title: "Rutina actualizada",
       showConfirmButton: false,
       timer: 1500
     });
@@ -622,148 +601,147 @@ const deleteRoutine = async (id) => {
         {/* 🏋️ RUTINAS */}
         {tab === "routines" && (
           <div className="content-rutinas">
-           <div >
+           
             <div className="cardAdmin">
 
-            <h2>{!modificandoRutina?"Crear Rutina":"Modificando Rutina"} </h2>
-            <input
-              placeholder="Nombre rutina"
-              value={routineForm.name}
-              onChange={(e) =>
-                setRoutineForm({ ...routineForm, name: e.target.value })
-              }
-            />
+                <h2>{!modificandoRutina?"Crear Rutina":"Modificando Rutina"} </h2>
+                <input
+                  placeholder="Nombre rutina"
+                  value={routineForm.name}
+                  onChange={(e) =>
+                    setRoutineForm({ ...routineForm, name: e.target.value })
+                  }
+                />
 
-            {days.map((day, dayIndex) => (
-            <div >
-              <div className="day-card" style={{background: dayIndex % 2==0?"#114ab415":"#3e32683f",marginBottom:"15px"}} key={dayIndex}>
+                {days.map((day, dayIndex) => (
+                <div >
+                  <div className="day-card" style={{background: dayIndex % 2==0?"#114ab415":"#57498a3f",marginBottom:"15px"}} key={dayIndex}>
 
-                <div className="day-header">
-                  <h3>{day.day}</h3>
-                  {day.day !== "Día 1" &&(
-                    <button onClick={() => removeDay(dayIndex)}>
-                    ❌
-                  </button>
-                  )}
-
-                </div>
-
-                   
-
-                  {day.exercises?.map((ex, exIndex) => {
-                      // 1. Forzamos a obtener siempre el ID string limpio
-                    const selectValue = ex.exercise && typeof ex.exercise === 'object' 
-                    ? ex.exercise._id 
-                    : ex.exercise;
-
-                    return (
-                        
-                        <div className="exercise-row" key={exIndex}>
-                          {/* SELECT EJERCICIO */}
-                          <div className="btn-updown">
-
-                            <button 
-                              onClick={() =>
-                                moveExercise(
-                                  dayIndex,
-                                  exIndex,
-                                  "up"
-                                )
-                              }
-                            >
-                              ⬆
-                            </button>
-
-                            <button 
-                              onClick={() =>
-                                moveExercise(
-                                  dayIndex,
-                                  exIndex,
-                                  "down"
-                                )
-                              }
-                             
-                            >
-                              ⬇
-                            </button>
-
-                          </div>
-                          <p style={{fontFamily:"italic", fontSize:"12px"}}>Ejercicio {exIndex +1} </p>
-                          <select
-                            value={selectValue || "Elegir ejercicio"} // 2. Usamos el ID limpio o un string vacío
-                            onChange={(e) =>
-                              updateExercise(dayIndex, exIndex, "exercise", e.target.value)
-                            }
-                          >
-                            <option disabled value="Elegir ejercicio">Elegir ejercicio</option>
-
-                            {exercises?.map((e) => (
-                              <option key={e._id} value={e._id}>
-                                {e.name} 
-                              </option>
-                            ))}
-                          </select>
-        
-                          {/* Aquí van tus inputs de sets, reps y botón de eliminar */}
-                          {/* SETS */}
-                          <input
-                            type="number"
-                            value={ex.sets}
-                            onChange={(e) =>
-                              updateExercise(dayIndex, exIndex, "sets", e.target.value)
-                            }
-                          />
-
-                          {/* REPS */}
-                          <input
-                            type="number"
-                            value={ex.reps}
-                            onChange={(e) =>
-                              updateExercise(dayIndex, exIndex, "reps", e.target.value)
-                            }
-                          />
-                          {/* DELETE */}
-                          <button style={{background: "linear-gradient(135deg, #925f5f, #9f2332)"}}
-                            onClick={() => removeExercise(dayIndex, exIndex)}
-                          >
-                            Borrar ejercicio 🗑️
-                          </button>
-                        
-                        </div>
-                        );
-                  })} 
-                      <button onClick={() => addExercise(dayIndex)}>
-                        + Agregar ejercicio
+                    <div className="day-header">
+                      <h3>{day.day}</h3>
+                      {day.day !== "Día 1" &&(
+                        <button onClick={() => removeDay(dayIndex)}>
+                        ❌
                       </button>
+                      )}
 
+                    </div>
+
+                      
+
+                      {day.exercises?.map((ex, exIndex) => {
+                          // 1. Forzamos a obtener siempre el ID string limpio
+                        const selectValue = ex.exercise && typeof ex.exercise === 'object' 
+                        ? ex.exercise._id 
+                        : ex.exercise;
+
+                        return (
+                            
+                            <div className="exercise-row" key={exIndex}>
+                              {/* SELECT EJERCICIO */}
+                              <div className="btn-updown">
+
+                                <button 
+                                  onClick={() =>
+                                    moveExercise(
+                                      dayIndex,
+                                      exIndex,
+                                      "up"
+                                    )
+                                  }
+                                >
+                                  ⬆
+                                </button>
+
+                                <button 
+                                  onClick={() =>
+                                    moveExercise(
+                                      dayIndex,
+                                      exIndex,
+                                      "down"
+                                    )
+                                  }
+                                
+                                >
+                                  ⬇
+                                </button>
+
+                              </div>
+                              <p style={{fontFamily:"italic", fontSize:"12px"}}>Ejercicio {exIndex +1} </p>
+                              <select
+                                value={selectValue || "Elegir ejercicio"} // 2. Usamos el ID limpio o un string vacío
+                                onChange={(e) =>
+                                  updateExercise(dayIndex, exIndex, "exercise", e.target.value)
+                                }
+                              >
+                                <option disabled value="Elegir ejercicio">Elegir ejercicio</option>
+
+                                {exercises?.map((e) => (
+                                  <option key={e._id} value={e._id}>
+                                    {e.name} 
+                                  </option>
+                                ))}
+                              </select>
+            
+                              {/* Aquí van tus inputs de sets, reps y botón de eliminar */}
+                              {/* SETS */}
+                              <input
+                                type="number"
+                                value={ex.sets}
+                                onChange={(e) =>
+                                  updateExercise(dayIndex, exIndex, "sets", e.target.value)
+                                }
+                              />
+
+                              {/* REPS */}
+                              <input
+                                type="number"
+                                value={ex.reps}
+                                onChange={(e) =>
+                                  updateExercise(dayIndex, exIndex, "reps", e.target.value)
+                                }
+                              />
+                              {/* DELETE */}
+                              <button style={{background: "linear-gradient(135deg, #925f5f, #9f2332)"}}
+                                onClick={() => removeExercise(dayIndex, exIndex)}
+                              >
+                                Borrar ejercicio 🗑️
+                              </button>
+                            
+                            </div>
+                            );
+                      })} 
+                          <button onClick={() => addExercise(dayIndex)}>
+                            + Agregar ejercicio
+                          </button>
+
+                    </div>
                 </div>
-            </div>
-            ))}
+                ))}
 
                 <div style={{marginTop:20}}>
-                  <button onClick={addDay}>+ Día</button>
+                    <button onClick={addDay}>+ Día</button>
+                    {!modificandoRutina
+                    ?
+                    routineForm.name &&
+                    <button className="save-btn" onClick={createRoutine}>
+                      💾 Guardar rutina {routineForm.name}
+                    </button>
+                    :
+                    <button className="save-btn" onClick={()=>updateRutine(selectedRoutine)}>
+                      💾 Actualizar rutina 
+                    </button>
+                    }
 
-                  {!modificandoRutina
-                  ?
-                  routineForm.name &&
-                  <button className="save-btn" onClick={createRoutine}>
-                    💾 Guardar rutina {routineForm.name}
-                  </button>
-                  :
-                  <button className="save-btn" onClick={()=>updateRutine(selectedRoutine)}>
-                    💾 Actualizar rutina 
-                  </button>
-                  }
-
-                   {modificandoRutina && selectedRoutine !="Selecciona una rutina" &&(
-                      <button 
-                      className="btn-icon danger"
-                      onClick={() => deleteRoutine(selectedRoutineData._id)}>🗑️ Borrar Rutina
-                        </button>
-                    )}
+                    {modificandoRutina && selectedRoutine !="Selecciona una rutina" &&(
+                        <button 
+                        className="btn-icon danger"
+                        onClick={() => deleteRoutine(selectedRoutineData._id)}>🗑️ Borrar Rutina
+                          </button>
+                      )}
                 </div>
 
-          </div>
+            </div>
              
           {/* ****************************** */}
 
@@ -785,12 +763,8 @@ const deleteRoutine = async (id) => {
               
             </div>    
 
-          </div>      
-          
-
-             
             
-        </div>
+          </div>
                 
 
 
@@ -825,7 +799,7 @@ const deleteRoutine = async (id) => {
       
 
 {selectedUserProgress.length > 0 && (
-  <div style={{ width: "90%", textAlign: "center" }}>
+  <div className="content-progreso" >
     <h2>Progreso de {selectedUserName}</h2>
 
     {/* 📅 Calendario */}

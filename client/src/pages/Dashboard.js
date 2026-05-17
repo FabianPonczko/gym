@@ -104,12 +104,25 @@ export default function Dashboard() {
 
   // 👉 guarda desde el modal
   const guardarPeso = async (data) => {
+    Swal.fire({
+              position: "center",
+              icon: "success", 
+              title: "Peso registrado correctamente",
+              showConfirmButton: false,
+              timer: 2000
+            });
     try {
       await api.post("/progress", data);
-      alert("Guardado 💪");
-       fetchHistory(data.exercise);
+      
+      fetchHistory(data.exercise);
     } catch (err) {
-      console.log(err);
+       Swal.fire({
+                position: "center",
+                icon: "error", 
+                title: "Error registrado correctamente",
+                showConfirmButton: false,
+                timer: 2000
+              });
     }
   };
 
@@ -172,22 +185,7 @@ const adjustRoutine = async () => {
                           </p>
                         ))}
 
-                        {/* <button
-                          onClick={() => toggleRecommendation(ex.name)}
-                          className={`btn-rec ${
-                            recommendations[ex.name] ? "hide" : "show"
-                          }`}
-                        >
-                          {recommendations[ex.name]
-                            ? "❌ Ocultar recomendación"
-                            : "💡 Ver recomendación"}
-                        </button> */}
-
-                        {/* {recommendations[ex.name] && (
-                          <RecommendationCard
-                            data={recommendations[ex.name]}
-                          />
-                        )} */}
+                      
                       </div>
                     );
         })}
