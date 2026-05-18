@@ -259,5 +259,8 @@ select, button {
   .cardAdmin{
     width: 95%;
   }
+  .grid{
+    width: 100%;
+  }
   
 }
