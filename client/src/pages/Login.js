@@ -14,6 +14,7 @@ export default function Login() {
 
   useEffect(() => {
     const user = getUserFromToken();
+    console.log("Usuario desde token:", user);
     if (user) {
         if (user.role === "Admin") {
         navigate("/admin");
@@ -39,7 +40,7 @@ export default function Login() {
     // 🔥 traer usuario real desde DB
     const resUser = await api.get("/users/me");
     const user = resUser.data;
-
+      console.log(user.data)
     if (user.role === "Admin") {
       navigate("/admin");
     } else if (user.role === "coach") {

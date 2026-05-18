@@ -34,8 +34,11 @@ export const login = async (req, res) => {
     if (!valid) return res.status(400).json("Password incorrecta");
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET
+      { id: user._id, role: user.role, onboardingCompleted:user.onboardingCompleted},
+      process.env.JWT_SECRET,
+      {
+       expiresIn: "30d"
+      }
     );
 
     res.json({ token, user });
