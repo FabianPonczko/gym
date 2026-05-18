@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [history, setHistory] = useState({}); 
   const [recommendations, setRecommendations] = useState({});
+  const [diaSeleccionado, setDiaSeleccionado] = useState(0);
 
   useEffect(() => {
     const fetchRoutine = async () => {
@@ -178,16 +179,43 @@ const adjustRoutine = async () => {
   };
 
   return (
+  <Layout>
+    <LoadingOverlay cargando={cargando}></LoadingOverlay>
 
-    <Layout>
-      <LoadingOverlay cargando={cargando}></LoadingOverlay>
+    <div className="container">
+      <h1 className="title">🏋️ Mi Rutina</h1>
+      
+      {routine ? (
+        <>
+          {/* 2. BARRA DE SOLAPAS */}
+          <div className="tabs-container" style={{ display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '10px' }}>
+            {routine.days.map((day, index) => (
+              <button
+                key={index}
+                onClick={() => setDiaSeleccionado(index)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: diaSeleccionado === index ? '#007bff' : '#e0e0e0',
+                  color: diaSeleccionado === index ? 'white' : 'black',
+                  fontWeight: 'bold',
+                  transition: '0.3s'
+                }}
+              >
+                {day.day}
+              </button>
+            ))}
+          </div>
 
-      <div className="container">
-        <h1 className="title">🏋️ Mi Rutina</h1>
-        {routine ? (
-          <>
-            <div className="days-container-dashboard">
-              {routine.days.map((day, dayIndex) => (
+          {/* 3. CONTENIDO FILTRADO */}
+          <div className="days-container-dashboard">
+            {/* Solo mostramos el día que coincide con el índice del estado */}
+            {routine.days.map((day, dayIndex) => {
+              if (dayIndex !== diaSeleccionado) return null;
+
+              return (
                 <div className="day-card" key={dayIndex}>
                   <h2>{day.day}</h2>
                   <div className="grid">
@@ -195,73 +223,59 @@ const adjustRoutine = async () => {
                       const ex = item.exercise || item;
                       return (
                         <div className="cardDashboard" key={i}>
-
-                        <h3>{ex.name}</h3>
-
-                        <p>{item.sets} Series  x  {item.reps}  Rep   {item.weight || null} {item.weight ? "kg" : null}</p>
-
-                       <div className="buttons-container">
-
-                        <button onClick={() => abrirModal(ex.name)}>
-                          Registrar peso
-                        </button>
-
-                        <button
-                          onClick={() => fetchHistory(ex.name)}
-                          className={`btn-rec ${
-                            history[ex.name] && history[ex.name].length > 0 ? "hide" : "show"
-                          }`}
-                        >
-                          {history[ex.name] && history[ex.name].length > 0
-                            ? "❌ Ocultar historial"
-                            : "💡 Ver historial"}
-                        </button>
-                        </div>
-                        {history[ex.name]?.map((h, idx) => (
-                         <div key={idx} style={{border:"solid 1px rgba(98, 89, 89, 0.13)",textAlign:"center"}}> 
-                          <p key={idx}>
-                            {h.weight}kg x {h.reps} -{" "}
-                            {new Date(h.date).toLocaleDateString()}
-                          </p>
-                          </div>
-                        ))}
-                        
-                        <button  style={{backgroundColor:"rgba(232, 51, 27, 0.81)",color  :"white",justifyContent:"center"}}
-                            onClick={(e) => {
-                            
-                            e.stopPropagation();
-
-                            borrarEjercicio(ex.name);
-                            }}
-                            className={`btn-eliminar ${
-                            history[ex.name] && history[ex.name].length > 0 ? "hide" : "show"
-                          }`}
-                            >
-                            Borrar progreso del ejercicio 🗑️
-                          </button>
+                          <h3>{ex.name}</h3>
+                          <p>{item.sets} Series x {item.reps} Rep {item.weight || null} {item.weight ? "kg" : null}</p>
                           
-                      
-                      </div>
-                    );
-        })}
-      </div>
-    </div>
-  ))}
-</div>
-          </>
-        ) : (
-          <p>Cargando rutina...</p>
-        )}
+                          <div className="buttons-container">
+                            <button onClick={() => abrirModal(ex.name)}>Registrar peso</button>
+                            <button
+                              onClick={() => fetchHistory(ex.name)}
+                              className={`btn-rec ${history[ex.name]?.length > 0 ? "hide" : "show"}`}
+                            >
+                              {history[ex.name]?.length > 0 ? "❌ Ocultar historial" : "💡 Ver historial"}
+                            </button>
+                          </div>
 
-        {/* 👉 MODAL */}
-        {selectedExercise && (
-          <WeightModal
+                          {history[ex.name]?.map((h, idx) => (
+                            <div key={idx} style={{ border: "solid 1px rgba(98, 89, 89, 0.13)", textAlign: "center" }}>
+                              <p>{h.weight}kg x {h.reps} - {new Date(h.date).toLocaleDateString()}</p>
+                            </div>
+                          ))}
+
+                          <button
+                            style={{ backgroundColor: "rgba(232, 51, 27, 0.81)", color: "white", justifyContent: "center", marginTop: '10px' }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              borrarEjercicio(ex.name);
+                            }}
+                            
+                             className={`btn-eliminar ${
+                            history[ex.name] && history[ex.name].length > 0 ? "hide" : "show"
+                          }`}
+                          >
+                            Borrar progreso 🗑️
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <p>Cargando rutina...</p>
+      )}
+
+      {selectedExercise && (
+        <WeightModal
           exercise={selectedExercise}
           onClose={() => setSelectedExercise(null)}
           onSave={guardarPeso}
-          />
-        )}
-      </div>
-    </Layout>
-  );
+        />
+      )}
+    </div>
+  </Layout>
+);
 }

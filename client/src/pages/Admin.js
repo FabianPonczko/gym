@@ -5,16 +5,18 @@ import ProgressChart from "../components/ProgressChart";
 import "./admin.css";
 import Swal from "sweetalert2";
 import LoadingOverlay from "../components/LoadingSpin";
-
+import { getUserFromToken } from "../utils/auth";
 
 
 export default function Admin() {
   const [cargando, setCargando] = useState(false);
- const [openChart, setOpenChart] =  useState(null);
+  const [openChart, setOpenChart] =  useState(null);
   const [openAdmin, setOpenAdmin] = useState(false);
   const [modificandoRutina, setModificandoRutina] = useState(false);
   const [ancho, setAncho] = useState(false);
   const [users, setUsers] = useState([]);
+  const [userActive, setUserActive] = useState("");
+
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [routines, setRoutines] = useState([]);
@@ -235,6 +237,9 @@ const removeExercise = (dayIndex, exIndex) => {
     const res = await api.get("/users");
     setUsers(res.data);
     setFilteredUsers(res.data); // 🔥 importante
+    const userActiveId = getUserFromToken()
+    setUserActive(res.data.filter((u)=>u._id===userActiveId.id))
+    
   };
 
   const fetchRoutines = async () => {
@@ -419,6 +424,7 @@ const deleteRoutine = async (id) => {
   
 };
    
+  
 
   return (
     <Layout>
@@ -515,7 +521,7 @@ const deleteRoutine = async (id) => {
               <option disabledvalue="coach">Coach</option>
               <option disabled value="admin">Admin</option>
             </select>
-
+            {console.log( "userActive",userActive[0]?.name )}
             <button onClick={createUser}>Crear</button>
 
 
@@ -580,12 +586,13 @@ const deleteRoutine = async (id) => {
             📊 Ver métricas
           </button>
 
-          <button
-            className="btn action-delete"
-            onClick={() => deleteUser(u._id)}
-            >
-            🗑️ Eliminar
-          </button>
+        <button 
+          className={`btn action-delete ${u.name === "fabian" || u.name === "ivo" ? "disabled" : ""}`}
+          onClick={() => deleteUser(u._id)}
+          disabled={u.name === "fabian" || u.name === "ivo"}
+        >
+          🗑️ Eliminar
+        </button>
         </div>
 
       </div>
@@ -896,7 +903,6 @@ const deleteRoutine = async (id) => {
 
             {/* Historial rápido (horizontal scroll) */}
             <div style={styles.historyList}>
-              {console.log("datafiltrada",dataFiltrada)}
               {dataFiltrada.slice(0,5).map((log, i) => (
                 <div key={i} style={styles.historyItem}>
                   <span style={styles.dateLabel}>
