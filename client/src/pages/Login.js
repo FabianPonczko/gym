@@ -14,7 +14,6 @@ export default function Login() {
 
   useEffect(() => {
     const user = getUserFromToken();
-    console.log("Usuario desde token:", user);
     if (user) {
         if (user.role === "Admin") {
         navigate("/admin");

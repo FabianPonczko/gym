@@ -1,8 +1,27 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { getUserFromToken } from "../utils/auth";
 import "./landing.css";
 
 export default function Landing() {
   const navigate = useNavigate();
+  
+  
+  // Si el usuario ya está logueado, redirigirlo a su dashboard
+   useEffect(() => {
+      const user = getUserFromToken();
+      if (user) {
+          if (user.role === "Admin") {
+          navigate("/admin");
+        } else if (user.role === "coach") {
+          navigate("/coach");
+        } else if (!user.onboardingCompleted) {
+          navigate("/onboarding");
+        } else {
+          navigate("/dashboard");
+        }
+      }
+    }, [navigate]);
 
   return (
     <div className="landing">
