@@ -12,7 +12,7 @@ body {
   display: flex;
   
   justify-content: center;
-  gap: 20px;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
@@ -76,27 +76,27 @@ select, button {
 }
 .btn-rec {
   border: none;
-  padding: 10px 16px;
+  padding: 1px 1px;
   border-radius: 999px; /* estilo iOS */
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.25s ease;
   color: white;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 /* estado ver */
 .btn-rec.show {
   background: linear-gradient(135deg, #38bdf8);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5);
 }
 
 /* estado ocultar */
 .btn-rec.hide {
   background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
 }
 
 /* hover */
@@ -110,6 +110,42 @@ select, button {
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
+.btn-eliminar {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px; /* estilo iOS */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* estado ver */
+.btn-eliminar.show {
+  display: none;
+  background: linear-gradient(135deg, #38bdf8);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* estado ocultar */
+.btn-eliminar.hide {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* hover */
+.btn-eliminar:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* click (efecto iOS) */
+.btn-eliminar:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
 
 /* nuevo*/
 

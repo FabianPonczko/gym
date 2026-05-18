@@ -82,6 +82,45 @@ export default function Dashboard() {
     };
   };
   
+  const borrarEjercicio = async (exercise) => {
+    const result = await Swal.fire({
+    title: "¿Eliminar progreso?",
+    text: "Esta acción no se puede deshacer",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#ef4444",
+    cancelButtonColor: "#64748b",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+    reverseButtons: true
+  });
+
+  if (result.isConfirmed) {
+    try{
+
+      await api.delete(
+        `/progress/exercise/${exercise}`
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Progreso eliminado",
+        text: "El progreso fue borrado 🗑️",
+        timer: 1500,
+        showConfirmButton: false
+      });
+
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error", 
+        text: "No se pudo eliminar el progreso",
+        timer: 1500,
+        showConfirmButton: false
+      }); 
+    }
+};
+}
   const toggleRecommendation = async (exercise) => {
   // 👉 si ya existe → ocultar
   if (recommendations[exercise]) {
@@ -170,21 +209,37 @@ const adjustRoutine = async () => {
                         <button
                           onClick={() => fetchHistory(ex.name)}
                           className={`btn-rec ${
-                            history[ex.name] ? "hide" : "show"
+                            history[ex.name] && history[ex.name].length > 0 ? "hide" : "show"
                           }`}
                         >
-                          {history[ex.name]
+                          {history[ex.name] && history[ex.name].length > 0
                             ? "❌ Ocultar historial"
                             : "💡 Ver historial"}
                         </button>
                         </div>
                         {history[ex.name]?.map((h, idx) => (
+                         <div key={idx} style={{border:"solid 1px rgba(98, 89, 89, 0.13)",textAlign:"center"}}> 
                           <p key={idx}>
                             {h.weight}kg x {h.reps} -{" "}
                             {new Date(h.date).toLocaleDateString()}
                           </p>
+                          </div>
                         ))}
+                        
+                        <button  style={{backgroundColor:"rgba(232, 51, 27, 0.81)",color  :"white",justifyContent:"center"}}
+                            onClick={(e) => {
+                            
+                            e.stopPropagation();
 
+                            borrarEjercicio(ex.name);
+                            }}
+                            className={`btn-eliminar ${
+                            history[ex.name] && history[ex.name].length > 0 ? "hide" : "show"
+                          }`}
+                            >
+                            Borrar progreso del ejercicio 🗑️
+                          </button>
+                          
                       
                       </div>
                     );
