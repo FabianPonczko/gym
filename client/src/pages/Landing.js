@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { getUserFromToken } from "../utils/auth";
 import "./landing.css";
 
 export default function Landing() {
   const navigate = useNavigate();
-  
+  const [isLoading, setIsLoading] = useState(true)
   
   // Si el usuario ya está logueado, redirigirlo a su dashboard
    useEffect(() => {
@@ -20,8 +20,17 @@ export default function Landing() {
         } else {
           navigate("/dashboard");
         }
+      } else {
+      setIsLoading(false); // 3. Si no hay usuario, dejamos de cargar y mostramos la landing
       }
+      
     }, [navigate]);
+
+   
+  if (isLoading) {
+    return null; // O podés poner un <div>Cargando...</div>
+  }
+
 
   return (
     <div className="landing">
