@@ -27,7 +27,7 @@ export default function Dashboard() {
         // 2. Si la API responde pero no hay datos reales de rutina
         sinRutina();
       }
-        
+      
       } catch (err) {
         console.log(err);
         sinRutina()
