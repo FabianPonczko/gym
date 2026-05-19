@@ -98,7 +98,6 @@ export default function Dashboard() {
 
   if (result.isConfirmed) {
     try{
-
       await api.delete(
         `/progress/exercise/${exercise}`
       );
@@ -120,6 +119,7 @@ export default function Dashboard() {
         showConfirmButton: false
       }); 
     }
+    fetchHistory(exercise);
 };
 }
   const toggleRecommendation = async (exercise) => {
@@ -144,22 +144,21 @@ export default function Dashboard() {
 
   // 👉 guarda desde el modal
   const guardarPeso = async (data) => {
-    Swal.fire({
-              position: "center",
-              icon: "success", 
-              title: "Peso registrado correctamente",
-              showConfirmButton: false,
-              timer: 2000
-            });
     try {
       await api.post("/progress", data);
-      
       fetchHistory(data.exercise);
+      Swal.fire({
+                position: "center",
+                icon: "success", 
+                title: "Peso registrado correctamente",
+                showConfirmButton: false,
+                timer: 2000
+              });
     } catch (err) {
        Swal.fire({
                 position: "center",
                 icon: "error", 
-                title: "Error registrado correctamente",
+                title: "Error peso no registrado",
                 showConfirmButton: false,
                 timer: 2000
               });
