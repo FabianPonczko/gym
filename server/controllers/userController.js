@@ -37,13 +37,16 @@ export const assignRoutine = async (req, res) => {
 // };
 export const getMyRoutine = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate({
-      path: "routine",
-      populate: {
-        path: "days.exercises.exercise",
-        select: "name group"
-      }
-    });
+    
+     const user = await User.findById(req.user.id)
+      .select("routine routineExpiration") // Trae solo lo necesario de User
+      .populate({
+        path: "routine",
+        populate: {
+          path: "days.exercises.exercise",
+          select: "name group"
+        }
+      });
 
     res.json(user.routine);
 
