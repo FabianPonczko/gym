@@ -41,6 +41,14 @@ export default function Admin() {
     exercises: ""
   });
 
+// 1. Define el estado inicial (2 meses a partir de hoy)
+  const getTwoMonthsFromNow = () => {
+    const date = new Date();
+    date.setMonth(date.getMonth() + 2);
+    return date.toISOString().split('T')[0]; // Formato YYYY-MM-DD para el input
+  };
+
+const [expirationDate, setExpirationDate] = useState(getTwoMonthsFromNow());
 
 const convertirAISO = (fechaStr) => {
   const [dia, mes, anio] = fechaStr.split('-');
@@ -346,11 +354,22 @@ const removeExercise = (dayIndex, exIndex) => {
   // 🔗 ASIGNAR
 
   const assignRoutine = async () => {
-    if (!selectedUser || !selectedRoutine) return;
+    if (!selectedUser || !selectedRoutine || !expirationDate) return;
+
+    // 2. Validar que la fecha no sea anterior a hoy
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0); // Limpia las horas para comparar solo días
+  const fechaSeleccionada = new Date(expirationDate);
+
+  if (fechaSeleccionada < hoy) {
+    alert("La fecha de caducidad no puede ser un día del pasado.");
+    return;
+  }
 
     await api.put("/users/assign-routine", {
       userId: selectedUser,
-      routineId: selectedRoutine
+      routineId: selectedRoutine,
+      expirationDate: expirationDate // Envía la fecha seleccionada
     });
 
     
@@ -800,7 +819,18 @@ const deleteRoutine = async (id) => {
                 <option key={r._id} value={r._id}>{r.name}</option>
               ))}
             </select>
-
+          
+            {/* Nuevo campo para editar la fecha de caducidad */}
+            <div className="form-group">
+              <label>Fecha de caducidad:</label>
+              <input 
+                type="date" 
+                value={expirationDate} 
+                min={new Date().toISOString().split('T')[0]} // Bloquea días pasados
+                onChange={(e) => setExpirationDate(e.target.value)} 
+              />
+            </div>
+    
             <button onClick={assignRoutine}>Asignar</button>
           </div>
         )}

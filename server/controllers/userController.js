@@ -2,13 +2,29 @@ import User from "../models/User.js";
 
 export const assignRoutine = async (req, res) => {
   try {
-    const { userId, routineId } = req.body;
+    const { userId, routineId, expirationDate  } = req.body;
 
+     // 1. Validar que la fecha exista y sea un formato válido
+    const fecha = new Date(expirationDate);
+    if (isNaN(fecha.getTime())) {
+      return res.status(400).json({ message: "La fecha proporcionada no es válida." });
+    }
+
+    // 2. Validar que no sea una fecha pasada
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    if (fecha < hoy) {
+      return res.status(400).json({ message: "La fecha de caducidad debe ser futura." });
+    }
+    
     const user = await User.findByIdAndUpdate(
-      userId,
-      { routine: routineId },
-      { new: true }
-    ).populate("routine");
+       userId,
+        { 
+          routine: routineId ,
+          routineExpiration: expirationDate
+        },
+       { new: true } 
+      ).populate("routine");
 
     res.json(user);
   } catch (err) {

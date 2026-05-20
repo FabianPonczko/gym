@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Routine"
   },
+
+  routineExpiration: {
+    type: Date
+  },
+  
   goal: {
   type: String,
   enum: ["strength", "hypertrophy", "weight_loss"],
