@@ -48,7 +48,11 @@ export const getMyRoutine = async (req, res) => {
         }
       });
 
-    res.json(user.routine);
+    // Enviamos la rutina y la fecha de expiración juntas
+    res.json({
+      routine: user.routine,
+      expirationDate: user.routineExpiration
+    });
 
   } catch (err) {
     console.log(err);
