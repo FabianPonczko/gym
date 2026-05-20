@@ -359,10 +359,18 @@ const removeExercise = (dayIndex, exIndex) => {
     // 2. Validar que la fecha no sea anterior a hoy
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0); // Limpia las horas para comparar solo días
+  
   const fechaSeleccionada = new Date(expirationDate);
+  fechaSeleccionada.setHours(0, 0, 0, 0);
 
   if (fechaSeleccionada < hoy) {
-    alert("La fecha de caducidad no puede ser un día del pasado.");
+    Swal.fire({
+      icon: "error",
+      title: "La fecha de caducidad no puede ser un día del pasado.",
+      showConfirmButton: false,
+      timer: 3000
+    });
+    
     return;
   }
 

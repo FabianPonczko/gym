@@ -22,6 +22,32 @@ export default function Dashboard() {
       try {
         const res = await api.get("users/my-routine");
      if (res.data && res.data.days && res.data.days.length >0 ) {
+
+      // Supongamos que la API devuelve 'routineExpiration' en el objeto del usuario o de la rutina
+        const expirationDate = res.data;
+        console.log("exira",expirationDate)
+        if (expirationDate) {
+          const hoy = new Date();
+          hoy.setHours(0, 0, 0, 0);
+
+          const fechaLimite = new Date(expirationDate);
+          fechaLimite.setHours(0, 0, 0, 0);
+
+          // 2. Si la fecha actual superó la de caducidad, ejecutar sinRutina
+          if (hoy > fechaLimite) {
+            Swal.fire({
+                 position: "center",
+                 icon: "info", 
+                 title: "La rutina ha caducado.",
+                 showConfirmButton: false,
+                 timer: 2500
+               });
+            
+            sinRutina();
+            return; // Detiene la ejecución aquí
+          }
+        }
+
         setRoutine(res.data);
       } else {
         // 2. Si la API responde pero no hay datos reales de rutina
@@ -183,7 +209,7 @@ const adjustRoutine = async () => {
 
     <div className="container">
       <h1 className="title">🏋️ Mi Rutina</h1>
-      
+      {console.log("routine",routine)}
       {routine ? (
         <>
           {/* 2. BARRA DE SOLAPAS */}
