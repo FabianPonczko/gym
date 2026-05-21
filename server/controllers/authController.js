@@ -4,7 +4,24 @@ import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password ,role} = req.body;
+    let { name, email, password ,role} = req.body;
+      
+     name = name
+        .toLowerCase()
+        .trim();
+
+    const userExists = await User.findOne({ name });
+
+      if (userExists) {
+
+        return res
+          .status(400)
+          .json({
+
+            msg:
+              "Nombre ya en uso"
+          });
+      }
 
     const hashed = await bcrypt.hash(password, 10);
 
@@ -23,7 +40,11 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { name, password } = req.body;
+    let { name, password } = req.body;
+
+    name = name
+    .toLowerCase()
+    .trim();
 
     const user = await User.findOne({ name });
 
