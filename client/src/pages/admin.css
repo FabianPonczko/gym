@@ -191,6 +191,11 @@
     margin-bottom: 10px;
   }
 
+  .user-info{
+    display: flex;
+    justify-content:space-around
+  }
+
 .avatar {
   width: 35px;
   height: 35px;

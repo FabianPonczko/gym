@@ -43,10 +43,34 @@ export default function Admin() {
 
 // 1. Define el estado inicial (2 meses a partir de hoy)
   const getTwoMonthsFromNow = () => {
+  
     const date = new Date();
-    date.setMonth(date.getMonth() + 2);
-    return date.toISOString().split('T')[0]; // Formato YYYY-MM-DD para el input
-  };
+
+      date.setMonth(date.getMonth() + 2);
+
+      const year = date.getFullYear();
+
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+};
+
+const getToday = () => {
+  const d = new Date();
+
+  const year = d.getFullYear();
+
+  const month = String(d.getMonth() + 1)
+    .padStart(2, "0");
+
+  const day = String(d.getDate())
+    .padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 
 const [expirationDate, setExpirationDate] = useState(getTwoMonthsFromNow());
 
@@ -363,7 +387,7 @@ const removeExercise = (dayIndex, exIndex) => {
   const fechaSeleccionada = new Date(expirationDate);
   fechaSeleccionada.setHours(0, 0, 0, 0);
 
-  if (fechaSeleccionada < hoy) {
+  if (expirationDate < hoy) {
     Swal.fire({
       icon: "error",
       title: "La fecha de caducidad no puede ser un día del pasado.",
@@ -548,7 +572,7 @@ const deleteRoutine = async (id) => {
               <option disabledvalue="coach">Coach</option>
               <option disabled value="admin">Admin</option>
             </select>
-            {console.log( "userActive",userActive[0]?.name )}
+            
             <button onClick={createUser}>Crear</button>
 
 
@@ -584,7 +608,7 @@ const deleteRoutine = async (id) => {
 
   {/* 📱 MOBILE CARDS */}
   <div className="mobile-only">
-    {filteredUsers.filter(p=>p.role==="client").map(u => (
+    {filteredUsers.filter(p=>p.role==="client"||p.role==="coach").map(u => (
       <div className="user-card" key={u._id}>
         
         <div className="user-header">
@@ -601,8 +625,19 @@ const deleteRoutine = async (id) => {
         <div className="user-info">
           <span className={`badge ${u.role}`}>{u.role}</span>
           <span className="muted">
-            {u.routine?.name || "Sin rutina"}
+            {u.routine?.name || "Sin rutina" }
+          </span>          
+          <span className="muted">
+               expira: 
           </span>
+          
+          <span >
+            {!isNaN(new Date(u.routineExpiration))
+              ? u.routineExpiration.split('T')[0]
+              : "sin dato"}
+          </span>  
+          
+        
         </div>
 
         <div className="actions">
@@ -830,13 +865,15 @@ const deleteRoutine = async (id) => {
           
             {/* Nuevo campo para editar la fecha de caducidad */}
             <div className="form-group">
+              
               <label>Fecha de caducidad:</label>
               <input 
                 type="date" 
-                value={expirationDate} 
+                value={expirationDate || ""} 
                 min={new Date().toISOString().split('T')[0]} // Bloquea días pasados
                 onChange={(e) => setExpirationDate(e.target.value)} 
               />
+            
             </div>
     
             <button onClick={assignRoutine}>Asignar</button>

@@ -184,6 +184,9 @@ select, button {
   margin-bottom: 20px;
   color: #38bdf8;
 }
+.swal-small-title {
+  font-size: 14px !important;
+}
 
 @media (max-width: 768px) {
 

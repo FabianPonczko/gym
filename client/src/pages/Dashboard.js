@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import api from "./services/api";
 import WeightModal from "../components/WeightModal";
 import Layout from "../components/Layout"
@@ -16,34 +16,50 @@ export default function Dashboard() {
   const [recommendations, setRecommendations] = useState({});
   const [diaSeleccionado, setDiaSeleccionado] = useState(0);
 
+  const executed = useRef(false);
+ 
   useEffect(() => {
+      
+    if (executed.current) return;
+      
+    executed.current = true;
+    
     const fetchRoutine = async () => {
       setCargando(true)
       try {
         const res = await api.get("users/my-routine");
-     if (res.data && res.data.days && res.data.days.length >0 ) {
-
+       
+     if (res.data.routine  && res.data.routine.days && res.data.routine.days.length >0 ) {
+      
       // Supongamos que la API devuelve 'routineExpiration' en el objeto del usuario o de la rutina
-        const expirationDate = res.data;
-        console.log("exira",expirationDate)
+        const expirationDate = res.data.expirationDate;
+       
         if (expirationDate) {
-          const hoy = new Date();
-          hoy.setHours(0, 0, 0, 0);
+         
+          const getNow = () => {
+         
+            const date = new Date();
 
-          const fechaLimite = new Date(expirationDate);
-          fechaLimite.setHours(0, 0, 0, 0);
+            const year = date.getFullYear();
 
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+
+            const day = String(date.getDate()).padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
+          };
+                  
           // 2. Si la fecha actual superó la de caducidad, ejecutar sinRutina
-          if (hoy > fechaLimite) {
-            Swal.fire({
-                 position: "center",
-                 icon: "info", 
-                 title: "La rutina ha caducado.",
-                 showConfirmButton: false,
-                 timer: 2500
-               });
+          if (getNow() > expirationDate.split("T")[0]) {
+            // Swal.fire({
+            //      position: "center",
+            //      icon: "info", 
+            //      title: "La rutina ha caducado.",
+            //      showConfirmButton: false,
+            //      timer: 2500
+            //    });
             
-            sinRutina();
+            sinRutina("Tu rutina ha caducado. Contacta a tu entrenador para una nueva asignación.");
             return; // Detiene la ejecución aquí
           }
         }
@@ -68,13 +84,16 @@ export default function Dashboard() {
     
   }, []);
   
-  const sinRutina = () =>{
+  const sinRutina = (msg) =>{
               Swal.fire({
                  position: "center",
                  icon: "info", 
-                 title: "No tienes una rutina asignada",
-                 showConfirmButton: false,
-                 timer: 2500
+                 title: msg || "No tienes una rutina asignada",
+                 showConfirmButton: true,
+                 
+                  customClass: {
+                  title: "swal-small-title",
+                  },
                });
   }
 
@@ -209,12 +228,12 @@ const adjustRoutine = async () => {
 
     <div className="container">
       <h1 className="title">🏋️ Mi Rutina</h1>
-      {console.log("routine",routine)}
+      {/* <p>{routine?.expirationDate.split("T")[0]}</p> */}
       {routine ? (
         <>
           {/* 2. BARRA DE SOLAPAS */}
           <div className="tabs-container" style={{ display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '10px' }}>
-            {routine.days.map((day, index) => (
+            {routine.routine.days.map((day, index) => (
               <button
                 key={index}
                 onClick={() => setDiaSeleccionado(index)}
@@ -237,7 +256,7 @@ const adjustRoutine = async () => {
           {/* 3. CONTENIDO FILTRADO */}
           <div className="days-container-dashboard">
             {/* Solo mostramos el día que coincide con el índice del estado */}
-            {routine.days.map((day, dayIndex) => {
+            {routine.routine.days.map((day, dayIndex) => {
               if (dayIndex !== diaSeleccionado) return null;
 
               return (
@@ -290,7 +309,7 @@ const adjustRoutine = async () => {
           </div>
         </>
       ) : (
-        <p>Cargando rutina...</p>
+        <p className="muted">rutina no encontrada o ha caducado</p>
       )}
 
       {selectedExercise && (
