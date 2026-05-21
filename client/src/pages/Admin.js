@@ -585,7 +585,7 @@ const deleteRoutine = async (id) => {
               onChange={e => setUserForm({ ...userForm, role: e.target.value })}>
               <option value="">Rol</option>
               <option value="client">Cliente</option>
-              <option disabledvalue="coach">Coach</option>
+              <option value="coach">Coach</option>
               <option disabled value="admin">Admin</option>
             </select>
             
