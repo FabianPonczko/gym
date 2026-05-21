@@ -4,7 +4,23 @@ export const assignRoutine = async (req, res) => {
   try {
     const { userId, routineId, expirationDate  } = req.body;
 
-     // 1. Validar que la fecha exista y sea un formato válido
+      const getNow = () => {
+
+        const date = new Date();
+
+        const year = date.getFullYear();
+
+        const month = String(date.getMonth() + 1)
+          .padStart(2, "0");
+
+        const day = String(date.getDate())
+          .padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+      }; 
+    
+    
+    // 1. Validar que la fecha exista y sea un formato válido
     const fecha = new Date(expirationDate);
     if (isNaN(fecha.getTime())) {
       return res.status(400).json({ message: "La fecha proporcionada no es válida." });
@@ -13,7 +29,7 @@ export const assignRoutine = async (req, res) => {
     // 2. Validar que no sea una fecha pasada
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
-    if (fecha < hoy) {
+    if (expirationDate < getNow()) {
       return res.status(400).json({ message: "La fecha de caducidad debe ser futura." });
     }
     

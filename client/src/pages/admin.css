@@ -191,6 +191,11 @@
     margin-bottom: 10px;
   }
 
+  .user-info{
+    display: flex;
+    justify-content:space-around
+  }
+
 .avatar {
   width: 35px;
   height: 35px;
@@ -373,6 +378,10 @@
 .btn.action-delete:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.swal-small-title-admin {
+  font-size: 18px !important;
 }
 
 @media (max-width: 768px) {
