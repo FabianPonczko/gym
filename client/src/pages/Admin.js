@@ -397,13 +397,15 @@ const removeExercise = (dayIndex, exIndex) => {
     
     return;
   }
+  
+  try{
 
     await api.put("/users/assign-routine", {
       userId: selectedUser,
       routineId: selectedRoutine,
       expirationDate: expirationDate // Envía la fecha seleccionada
     });
-
+    
     
     Swal.fire({
       icon: "success",
@@ -412,6 +414,19 @@ const removeExercise = (dayIndex, exIndex) => {
       timer: 1500
     });
     fetchUsers();
+  }catch(err){
+     const msg =
+    err.response?.data?.message ||
+    "Error del servidor";
+
+  Swal.fire({
+    icon: "error",
+    title: msg,
+    customClass: {
+        title: "swal-small-title-admin",
+    },
+  });
+  }
   };
 
 const deleteRoutine = async (id) => {
@@ -632,9 +647,12 @@ const deleteRoutine = async (id) => {
           </span>
           
           <span >
-            {!isNaN(new Date(u.routineExpiration))
-              ? u.routineExpiration.split('T')[0]
-              : "sin dato"}
+            {u.routineExpiration? u.routineExpiration.split("T")[0]
+                  .split("-")
+                  .reverse()
+                  .join("/")
+              : "sin dato"  
+            }
           </span>  
           
         

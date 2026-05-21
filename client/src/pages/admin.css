@@ -380,6 +380,10 @@
   cursor: not-allowed;
 }
 
+.swal-small-title-admin {
+  font-size: 18px !important;
+}
+
 @media (max-width: 768px) {
 
   .menu-admin-btn {
