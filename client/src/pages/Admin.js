@@ -323,7 +323,8 @@ const removeExercise = (dayIndex, exIndex) => {
       Swal.fire({
       position: "top-end",
       icon: "error",
-      title: "Error creando usuario",
+      title: err.response?.data?.msg ||
+    "Error creando usuario",
       showConfirmButton: false,
       timer: 1500
     });
