@@ -27,11 +27,16 @@ export default function Login() {
     }
   }, [navigate]);
 
-  const handleLogin = async () => {
-  try {
-    const res = await api.post("/auth/login", {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    
+    try {
+      setLoading(true)
+
+      const res = await api.post("/auth/login", {
       name,
       password
+
     });
 
     localStorage.setItem("token", res.data.token);
@@ -39,7 +44,7 @@ export default function Login() {
     // 🔥 traer usuario real desde DB
     const resUser = await api.get("/users/me");
     const user = resUser.data;
-      console.log(user.data)
+
     if (user.role === "Admin") {
       navigate("/admin");
     } else if (user.role === "coach") {
@@ -50,8 +55,10 @@ export default function Login() {
       navigate("/dashboard");
     }
 
-  } catch {
-    alert("Error login");
+  } catch (err){
+    setError(err.response.data)
+  }finally{
+    setLoading(false)
   }
 };
 
@@ -59,7 +66,10 @@ export default function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-
+        
+        <form
+        onSubmit={handleLogin}
+        >
         <h1 className="logo">🏋️ GymApp</h1>
         <p className="subtitle">Bienvenido de nuevo</p>
 
@@ -68,21 +78,21 @@ export default function Login() {
           placeholder="Nombre"
           onChange={e => setName(e.target.value)}
           className={error ? "input error" : "input"}
-        />
+          />
 
         <input
           type="password"
           placeholder="Password"
           onChange={e => setPassword(e.target.value)}
           className={error ? "input error" : "input"}
-        />
+          />
 
         {error && <p className="error-text">{error}</p>}
 
-        <button onClick={handleLogin} disabled={loading}>
+        <button disabled={loading}>
           {loading ? "Entrando..." : "Ingresar"}
         </button>
-
+        </form>
       </div>
     </div>
   );
