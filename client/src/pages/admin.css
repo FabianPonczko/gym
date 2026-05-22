@@ -388,24 +388,34 @@
 
   .menu-admin-btn {
 
-    display: block;
+    display: flex ;
 
     position: fixed;
 
     top: 15px;
-    right: 15px;
+    
+    /* right: 15px; */
+    
+    left: 0px;
+    
+    width: 40px;
 
     z-index: 2000;
 
-    background: #0f172a;
-
+    background: #152a0f;
+    
     color: white;
-
+    
     border: none;
-
+    
     padding: 10px 14px;
-
+    
     border-radius: 10px;
+  }
+  
+  .sidebarAdmin.open {
+
+    left: 0px;
   }
 
   .sidebarAdmin {
@@ -413,15 +423,16 @@
     position: fixed;
 
     top: 0;
-    right: -250px;
+    /* right: -250px; */
+    left: -550px;
 
-    width: 220px;
+    width: 250px;
 
     height: 100dvh;
 
     background: #020617;
 
-    transition: right 0.3s ease;
+    transition: left 0.3s ease;
 
     z-index: 1500;
 
@@ -461,10 +472,6 @@
   .cardProgreso{
   display: flex;    
   flex-direction: column;
-  }
-  .sidebarAdmin.open {
-
-    right: 0;
   }
   .btn-updown{
   display: flex;

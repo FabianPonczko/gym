@@ -1,7 +1,7 @@
 // LoadingOverlay.js
 import { TailSpin } from 'react-loader-spinner';
 
-const LoadingOverlay = ({ cargando }) => {
+const LoadingOverlay = ({ cargando,size="100" }) => {
   if (!cargando) return null;
 
   return (
@@ -9,8 +9,8 @@ const LoadingOverlay = ({ cargando }) => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      height: '100vh',
-      width: '100vw',
+      height: `${size}vh`,
+      width: `${size}vw`,
       position: 'fixed',
       top: 0,
       left: 0,

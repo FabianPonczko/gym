@@ -1,8 +1,9 @@
 import Sidebar from "./Sidebar";
 import { useState,useEffect } from "react";
 import "./layout.css";
+import { Navbar } from "./Navbar";
 
-export default function Layout({ children }) {
+export default function Layout({ children,visible=false }) {
   const [open, setOpen] = useState(false);
 
    useEffect(() => {
@@ -22,9 +23,13 @@ export default function Layout({ children }) {
 
   }, [open]);
 
+ 
+  
+  
   return (
+
     <div className="app">
-      <button style={{ visibility: open ? "hidden" : "visible" }}
+      <button style={{ visibility: open || visible? "hidden" : "visible" }}
         className="menu-btn"
         onClick={() => setOpen(!open)}
         > 

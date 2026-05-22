@@ -6,6 +6,7 @@ import "./admin.css";
 import Swal from "sweetalert2";
 import LoadingOverlay from "../components/LoadingSpin";
 import { getUserFromToken } from "../utils/auth";
+import { Navbar } from "../components/Navbar";
 
 
 export default function Admin() {
@@ -94,21 +95,21 @@ const hoy = new Date().toISOString().split('T')[0];
 // ------------------
 
   const handleTabChange = (newTab) => {
-  setTab(newTab);
-  setSelectedUserProgress([])
-  setModificandoRutina(false)
-  // 🔥 limpiar selección cuando entrás a rutinas
-  // setDays([ { day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine)
-  handleDiscard()
-  if (newTab !== "routines") {
-    setSelectedRoutine("");
-    setSelectedRoutineData(null);
-  }
-  setTimeout(() => {
+    setTab(newTab);
+    setSelectedUserProgress([])
+    setModificandoRutina(false)
+    // 🔥 limpiar selección cuando entrás a rutinas
+    // setDays([ { day: "Día 1", exercises: [] }],routineForm.name="",selectedRoutine)
+    handleDiscard()
+    if (newTab !== "routines") {
+      setSelectedRoutine("");
+      setSelectedRoutineData(null);
+    }
+    setTimeout(() => {
 
-    setOpenAdmin(false);
+      setOpenAdmin(false);
 
-  }, 300);
+    }, 300);
 };
 
   const handleSelectRoutine = async (id) => {
@@ -266,11 +267,24 @@ const removeExercise = (dayIndex, exIndex) => {
   }
 
   const fetchUsers = async () => {
-    const res = await api.get("/users");
-    setUsers(res.data);
-    setFilteredUsers(res.data); // 🔥 importante
-    const userActiveId = getUserFromToken()
-    setUserActive(res.data.filter((u)=>u._id===userActiveId.id))
+    
+    try{
+      setCargando(true)
+      const res = await api.get("/users");
+      
+      setUsers(res.data);
+      
+      setFilteredUsers(res.data); // 🔥 importante
+      
+      const userActiveId = getUserFromToken()
+      
+      setUserActive(res.data.filter((u)=>u._id===userActiveId.id))
+    }catch(err){
+      console.log(err)
+    }finally{
+      setCargando(false)
+    }
+
     
   };
 
@@ -494,15 +508,22 @@ const deleteRoutine = async (id) => {
   
 
   return (
-    <Layout>
+    <Layout visible="true">
     
     <LoadingOverlay cargando={cargando} />
 
     <div className="admin-container">
 
+
+    <Navbar
+      handleTabChange={handleTabChange}
+      setOpenAdmin={setOpenAdmin}
+      openAdmin={openAdmin}
+      tab={tab}
+    />
       {/* SIDEBAR */}
 
-        <button style={{ visibility: openAdmin ? "hidden" : "visible" }}
+        {/* <button style={{ visibility: openAdmin ? "hidden" : "visible"}}
             className="menu-admin-btn"
             onClick={() =>
               setOpenAdmin(!openAdmin)
@@ -558,7 +579,7 @@ const deleteRoutine = async (id) => {
           🔗 Asignar
         </button>
 
-      </div>
+      </div> */}
 
 
 
