@@ -388,21 +388,22 @@
 
   .menu-admin-btn {
 
-    display: flex ;
+    display: flex;
 
+    justify-content: center;
     position: fixed;
 
-    top: 15px;
+    top: 20px;
     
     /* right: 15px; */
     
-    left: 0px;
+    left: 20px;
     
-    width: 40px;
+    width: 20px;
 
     z-index: 2000;
 
-    background: #152a0f;
+    background: #151d2b;
     
     color: white;
     
@@ -410,7 +411,7 @@
     
     padding: 10px 14px;
     
-    border-radius: 10px;
+    border-radius: 0px;
   }
   
   .sidebarAdmin.open {
