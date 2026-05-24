@@ -907,7 +907,7 @@ const deleteRoutine = async (id) => {
             <div className="form-group">
               
               <label>Fecha de caducidad:</label>
-              <input 
+              <input style={{marginTop:"10px"}}
                 type="date" 
                 value={expirationDate || ""} 
                 min={new Date().toISOString().split('T')[0]} // Bloquea días pasados

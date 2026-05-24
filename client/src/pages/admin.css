@@ -29,7 +29,7 @@
 
 .sidebarAdmin button {
   background: rgb(6, 5, 24);
-  border: none;
+  border: 1px solid #162342a8;
   color: #94a3b8;
   padding: 20%;
   text-align: center;
@@ -301,12 +301,12 @@
 
 /* ===== SCROLL ===== */
 .content::-webkit-scrollbar {
-  width: 8px;
+  width: 0px;
 }
 
 .content::-webkit-scrollbar-thumb {
   background: #1e293b;
-  border-radius: 10px;
+  
 }
 
 /* ===== TEXT ===== */
@@ -384,6 +384,7 @@
   font-size: 18px !important;
 }
 
+
 @media (max-width: 768px) {
 
   .menu-admin-btn {
@@ -407,7 +408,7 @@
     
     color: white;
     
-    border: none;
+    border:none;
     
     padding: 10px 14px;
     
@@ -432,6 +433,8 @@
     height: 100dvh;
 
     background: #020617;
+
+    
 
     transition: left 0.3s ease;
 

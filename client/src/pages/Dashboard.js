@@ -105,7 +105,7 @@ export default function Dashboard() {
   
          
   const fetchHistory = async (exercise) => {
-    setCargando(true)
+    // setCargando(true)
     try{
 
       const res = await api.get(`/progress/by-exercise?exercise=${exercise}`);
@@ -124,7 +124,7 @@ export default function Dashboard() {
     }catch(err){
       console.log(err); 
     }finally{
-      setCargando(false);
+      // setCargando(false);
     };
   };
   
@@ -238,11 +238,11 @@ const adjustRoutine = async () => {
                 key={index}
                 onClick={() => setDiaSeleccionado(index)}
                 style={{
-                  padding: '10px 20px',
-                  borderRadius: '20px',
+                  padding: '20px 20px',
+                  borderRadius: '5px',
                   border: 'none',
                   cursor: 'pointer',
-                  backgroundColor: diaSeleccionado === index ? '#007bff' : '#e0e0e0',
+                  backgroundColor: diaSeleccionado === index ? '#007bff' : '#e0e0e060',
                   color: diaSeleccionado === index ? 'white' : 'black',
                   fontWeight: 'bold',
                   transition: '0.3s'
@@ -267,6 +267,7 @@ const adjustRoutine = async () => {
                       const ex = item.exercise || item;
                       return (
                         <div className="cardDashboard" key={i}>
+                          <span>Ejercicio {i+1}</span>
                           <h3>{ex.name}</h3>
                           <p>{item.sets} Series x {item.reps} Rep {item.weight || null} {item.weight ? "kg" : null}</p>
                           
@@ -278,6 +279,7 @@ const adjustRoutine = async () => {
                             >
                               {history[ex.name]?.length > 0 ? "❌ Ocultar historial" : "💡 Ver historial"}
                             </button>
+                            
                           </div>
 
                           {history[ex.name]?.map((h, idx) => (

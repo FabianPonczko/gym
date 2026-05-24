@@ -83,7 +83,7 @@ return(
                 localStorage.removeItem("token");
                 window.location.href = "/";
             }}>
-            Logout
+            Salir
             </button>
 
         </div>

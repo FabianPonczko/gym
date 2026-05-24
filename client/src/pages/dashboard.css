@@ -20,6 +20,11 @@ body {
   justify-content: center;
   gap: 10px;
   margin-bottom: 20px;
+  width: 90%;
+}
+.buttons-container button{
+display: flex;
+justify-content: center;
 }
 
 .title {
@@ -57,7 +62,15 @@ body {
   box-shadow: 0 5px 15px rgba(17, 16, 7, 0.3);
   transition: 0.2s;
 }
-
+.cardDashboard span{
+  width: 100%;
+  padding: 5px;
+  border-radius: 5px;
+  text-align: center;
+  background: #23305557;
+  font-size: small;
+  color: #e2e1d3
+}
 .cardDashboard:hover {
   transform: scale(1.03);
 }

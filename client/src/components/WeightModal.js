@@ -35,6 +35,7 @@ export default function WeightModal({ exercise, onClose, onSave }) {
       >
 
         <input
+          autoFocus
           type="number"
           placeholder="Peso"
           value={weight}
@@ -44,6 +45,7 @@ export default function WeightModal({ exercise, onClose, onSave }) {
         />
 
         <input
+        au
           type="number"
           placeholder="Reps"
           value={reps}
