@@ -9,7 +9,8 @@ import LoadingOverlay from "../components/LoadingSpin";
 
 
 export default function Dashboard() {
-  const [cargando,setCargando] = useState(false)
+  // const [cargando,setCargando] = useState(false)
+  const [cargando, setCargando] = useState({});   
   const [routine, setRoutine] = useState(null);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [history, setHistory] = useState({}); 
@@ -105,7 +106,7 @@ export default function Dashboard() {
   
          
   const fetchHistory = async (exercise) => {
-    // setCargando(true)
+    setCargando(prev => ({ ...prev, [exercise]: true }))
     try{
 
       const res = await api.get(`/progress/by-exercise?exercise=${exercise}`);
@@ -124,7 +125,7 @@ export default function Dashboard() {
     }catch(err){
       console.log(err); 
     }finally{
-      // setCargando(false);
+      setCargando(prev => ({ ...prev, [exercise]: false }))
     };
   };
   
@@ -224,7 +225,7 @@ const adjustRoutine = async () => {
 
   return (
   <Layout>
-    <LoadingOverlay cargando={cargando}></LoadingOverlay>
+    {/* <LoadingOverlay cargando={cargando}></LoadingOverlay> */}
 
     <div className="container">
       <h1 className="title">🏋️ Mi Rutina</h1>
@@ -274,10 +275,15 @@ const adjustRoutine = async () => {
                           <div className="buttons-container">
                             <button onClick={() => abrirModal(ex.name)}>Registrar peso</button>
                             <button
+                              style={{background:cargando[ex.name] ?"none":null}}
                               onClick={() => fetchHistory(ex.name)}
                               className={`btn-rec ${history[ex.name]?.length > 0 ? "hide" : "show"}`}
                             >
-                              {history[ex.name]?.length > 0 ? "❌ Ocultar historial" : "💡 Ver historial"}
+                              {cargando[ex.name]?
+                              "Cargando..."
+                            :
+                              history[ex.name]?.length > 0 ? "❌ Ocultar historial" : "💡 Ver historial"
+                            }
                             </button>
                             
                           </div>
