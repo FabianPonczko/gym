@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [history, setHistory] = useState({}); 
   const [recommendations, setRecommendations] = useState({});
   const [diaSeleccionado, setDiaSeleccionado] = useState(0);
+  const [showHistory, setShowHistory] = useState({});
 
   const executed = useRef(false);
  
@@ -106,28 +107,51 @@ export default function Dashboard() {
   
          
   const fetchHistory = async (exercise) => {
-    setCargando(prev => ({ ...prev, [exercise]: true }))
-    try{
 
-      const res = await api.get(`/progress/by-exercise?exercise=${exercise}`);
-      if (history[exercise]) {
-        setHistory(prev => {
-          const copy = { ...prev };
-          delete copy[exercise];
-          return copy;
-        });
-        return;
-      }
-      setHistory(prev => ({
-        ...prev,
-        [exercise]: res.data
-      }));
-    }catch(err){
-      console.log(err); 
-    }finally{
-      setCargando(prev => ({ ...prev, [exercise]: false }))
-    };
-  };
+  setCargando(prev => ({
+    ...prev,
+    [exercise]: true
+  }));
+
+  try {
+
+    const res = await api.get(
+      `/progress/by-exercise?exercise=${exercise}`
+    );
+
+    if (res.data.length === 0) {
+
+      Swal.fire({
+        icon: "info",
+        title: "Sin historial",
+        text: "Todavía no registraste pesos para este ejercicio"
+      });
+
+      return;
+    }
+
+    setHistory(prev => ({
+      ...prev,
+      [exercise]: res.data
+    }));
+
+    setShowHistory(prev => ({
+      ...prev,
+      [exercise]: true
+    }));
+
+  } catch (err) {
+
+    console.error(err);
+
+  } finally {
+
+    setCargando(prev => ({
+      ...prev,
+      [exercise]: false
+    }));
+  }
+};
   
   const borrarEjercicio = async (exercise) => {
     const result = await Swal.fire({
@@ -147,6 +171,15 @@ export default function Dashboard() {
       await api.delete(
         `/progress/exercise/${exercise}`
       );
+      setHistory(prev => ({
+          ...prev,
+          [exercise]: null
+        }));
+
+        setShowHistory(prev => ({
+          ...prev,
+          [exercise]: false
+        }));
 
       Swal.fire({
         icon: "success",
@@ -233,7 +266,7 @@ const adjustRoutine = async () => {
       {routine ? (
         <>
           {/* 2. BARRA DE SOLAPAS */}
-          <div className="tabs-container" style={{ display: 'flex', gap: '10px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '10px' }}>
+          <div className="tabs-container" style={{justifyContent: routine?.routine?.days.length < 5 ? "center" : "start"}} >
             {routine.routine.days.map((day, index) => (
               <button
                 key={index}
@@ -274,7 +307,7 @@ const adjustRoutine = async () => {
                           
                           <div className="buttons-container">
                             <button onClick={() => abrirModal(ex.name)}>Registrar peso</button>
-                            <button
+                            {/* <button
                               style={{background:cargando[ex.name] ?"none":null}}
                               onClick={() => fetchHistory(ex.name)}
                               className={`btn-rec ${history[ex.name]?.length > 0 ? "hide" : "show"}`}
@@ -284,29 +317,95 @@ const adjustRoutine = async () => {
                             :
                               history[ex.name]?.length > 0 ? "❌ Ocultar historial" : "💡 Ver historial"
                             }
-                            </button>
+                            </button> */}
+                            <button
+                             style={{
+                              background:
+                                cargando[ex.name]
+                                  ? "none"
+                                  : null
+                            }}
+                            
+                            onClick={() => {
+
+                              if (history[ex.name]) {
+                                  
+                                setShowHistory(prev => ({
+                                  ...prev,
+                                  [ex.name]:
+                                    !prev[ex.name]
+                                }));
+
+                              } else {
+
+                                fetchHistory(ex.name);
+                              }
+                            }}
+
+                            className={`btn-rec ${history[ex.name]?.length > 0 &&
+                              showHistory[ex.name]
+                                ? "hide"
+                                : "show"
+                            }`}
+                          >
+                            {/* {cargando[ex.name]
+                              ? "Cargando..."
+                              : showHistory[ex.name]
+                                ? "❌ Ocultar historial"
+                                : "💡 Ver historial"} */}
+
+                              {cargando[ex.name]
+                                ? "Cargando..."
+                                : history[ex.name]?.length > 0
+                                  ? (
+                                      showHistory[ex.name]
+                                        ? "❌ Ocultar historial"
+                                        : "💡 Ver historial"
+                                    )
+                                  : "💡 Ver historial"}
+                          </button>
                             
                           </div>
 
-                          {history[ex.name]?.map((h, idx) => (
+                          {/* {history[ex.name]?.map((h, idx) => (
                             <div key={idx} style={{ border: "solid 1px rgba(98, 89, 89, 0.13)", textAlign: "center" }}>
                               <p>{h.weight}kg x {h.reps} - {new Date(h.date).toLocaleDateString()}</p>
                             </div>
-                          ))}
+                          ))} */}
+                          {showHistory[ex.name] &&
+                            history[ex.name]?.map((h, idx) => (
 
-                          <button
-                            style={{ backgroundColor: "rgba(232, 51, 27, 0.81)", color: "white", justifyContent: "center", marginTop: '10px' }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              borrarEjercicio(ex.name);
-                            }}
-                            
-                             className={`btn-eliminar ${
+                              <div
+                                key={idx}
+                                style={{
+                                  border:
+                                    "solid 1px rgba(98, 89, 89, 0.13)",
+                                  textAlign: "center"
+                                }}
+                              >
+                                <p>
+                                  {h.weight}kg x {h.reps} -{" "}
+                                  {new Date(h.date)
+                                    .toLocaleDateString()}
+                                </p>
+                              </div>
+
+                          ))
+                        }
+                          {showHistory[ex.name] &&<button
+                          style={{ backgroundColor: "rgba(232, 51, 27, 0.81)", color: "white", justifyContent: "center", marginTop: '10px' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            borrarEjercicio(ex.name);
+                          }}
+                          
+                          className={`btn-eliminar ${
                             history[ex.name] && history[ex.name].length > 0 ? "hide" : "show"
-                          }`}
-                          >
+                            }`}
+                            >
                             Borrar progreso 🗑️
                           </button>
+                          }
                         </div>
                       );
                     })}
