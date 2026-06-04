@@ -3,8 +3,12 @@ import { useState,useEffect } from "react";
 import "./layout.css";
 import { Navbar } from "./Navbar";
 
+
 export default function Layout({ children,visible=false }) {
   const [open, setOpen] = useState(false);
+
+  let user
+  
 
    useEffect(() => {
 
@@ -20,6 +24,8 @@ export default function Layout({ children,visible=false }) {
       return () =>
         clearTimeout(timer);
     }
+
+   
 
   }, [open]);
 

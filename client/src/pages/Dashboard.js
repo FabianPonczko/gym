@@ -8,8 +8,9 @@ import Swal from "sweetalert2";
 import LoadingOverlay from "../components/LoadingSpin";
 
 
+
 export default function Dashboard() {
-  // const [cargando,setCargando] = useState(false)
+  const [loading,setLoading] = useState(false)
   const [cargando, setCargando] = useState({});   
   const [routine, setRoutine] = useState(null);
   const [selectedExercise, setSelectedExercise] = useState(null);
@@ -17,21 +18,16 @@ export default function Dashboard() {
   const [recommendations, setRecommendations] = useState({});
   const [diaSeleccionado, setDiaSeleccionado] = useState(0);
   const [showHistory, setShowHistory] = useState({});
-
+  const [verGif,setVerGif] = useState(false)
   const executed = useRef(false);
- 
-  useEffect(() => {
-      
-    if (executed.current) return;
-      
-    executed.current = true;
-    
-    const fetchRoutine = async () => {
-      setCargando(true)
+  
+
+   const fetchRoutine = async () => {
+      setLoading(true)
       try {
         const res = await api.get("users/my-routine");
        
-     if (res.data.routine  && res.data.routine.days && res.data.routine.days.length >0 ) {
+        if (res.data.routine  && res.data.routine.days && res.data.routine.days.length >0 ) {
       
       // Supongamos que la API devuelve 'routineExpiration' en el objeto del usuario o de la rutina
         const expirationDate = res.data.expirationDate;
@@ -76,13 +72,21 @@ export default function Dashboard() {
         console.log(err);
         sinRutina()
       } finally{
-        setCargando(false)
+        setLoading(false)
       }
       
     };
 
+ 
+
+  useEffect(() => {
+      
+    if (executed.current) return;
+  
+    executed.current = true;
+
     fetchRoutine();
-    
+   
     
   }, []);
   
@@ -198,7 +202,6 @@ export default function Dashboard() {
         showConfirmButton: false
       }); 
     }
-    fetchHistory(exercise);
 };
 }
   const toggleRecommendation = async (exercise) => {
@@ -256,10 +259,13 @@ const adjustRoutine = async () => {
   }
   };
 
+const manejarCambio = (evento) => {
+    setVerGif(evento.target.checked); // Accede a .checked, no a .value
+  };
+
   return (
   <Layout>
-    {/* <LoadingOverlay cargando={cargando}></LoadingOverlay> */}
-
+    
     <div className="container">
       <h1 className="title">🏋️ Mi Rutina</h1>
       {/* <p>{routine?.expirationDate.split("T")[0]}</p> */}
@@ -282,7 +288,8 @@ const adjustRoutine = async () => {
                   transition: '0.3s'
                 }}
               >
-                {day.day}
+                {day.day} 
+                
               </button>
             ))}
           </div>
@@ -296,6 +303,11 @@ const adjustRoutine = async () => {
               return (
                 <div className="day-card" key={dayIndex}>
                   <h2>{day.day}</h2>
+                   <input 
+                    type="checkbox" 
+                    checked={verGif} 
+                    onChange={manejarCambio} 
+                  />
                   <div className="grid">
                     {day.exercises.map((item, i) => {
                       const ex = item.exercise || item;
@@ -303,6 +315,12 @@ const adjustRoutine = async () => {
                         <div className="cardDashboard" key={i}>
                           <span>Ejercicio {i+1}</span>
                           <h3>{ex.name}</h3>
+                          <img hidden = {!verGif?true:false}
+                            src={`/ejercicios/${ex.name}.gif`}
+
+                            alt={ex.name} 
+                            className="exercise-img" 
+                          />
                           <p>{item.sets} Series x {item.reps} Rep {item.weight || null} {item.weight ? "kg" : null}</p>
                           
                           <div className="buttons-container">
@@ -416,6 +434,9 @@ const adjustRoutine = async () => {
           </div>
         </>
       ) : (
+        loading ? 
+        <LoadingOverlay cargando={cargando}></LoadingOverlay>
+        :
         <p className="muted">rutina no encontrada o ha caducado</p>
       )}
 
