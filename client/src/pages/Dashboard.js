@@ -325,17 +325,7 @@ const manejarCambio = (evento) => {
                           
                           <div className="buttons-container">
                             <button onClick={() => abrirModal(ex.name)}>Registrar peso</button>
-                            {/* <button
-                              style={{background:cargando[ex.name] ?"none":null}}
-                              onClick={() => fetchHistory(ex.name)}
-                              className={`btn-rec ${history[ex.name]?.length > 0 ? "hide" : "show"}`}
-                            >
-                              {cargando[ex.name]?
-                              "Cargando..."
-                            :
-                              history[ex.name]?.length > 0 ? "❌ Ocultar historial" : "💡 Ver historial"
-                            }
-                            </button> */}
+                            
                             <button
                              style={{
                               background:
