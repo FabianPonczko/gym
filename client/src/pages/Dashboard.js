@@ -21,6 +21,9 @@ export default function Dashboard() {
   const [verGif,setVerGif] = useState(false)
   const executed = useRef(false);
   const [exerciseGif, setExerciseGif] = useState(null);
+  
+  // 1. Agrega este estado al inicio de tu componente junto a los demás
+  const [imgCargada, setImgCargada] = useState(false);
 
    const fetchRoutine = async () => {
       setLoading(true)
@@ -120,8 +123,12 @@ export default function Dashboard() {
     setSelectedExercise(exercise);
   };
 
-  const abrirGif = (exercise) => {
-  setExerciseGif(exercise);
+//   const abrirGif = (exercise) => {
+//   setExerciseGif(exercise);
+// };
+const abrirGif = (ex) => {
+  setImgCargada(false); // Reinicia el estado de carga
+  setExerciseGif(ex);   // Abre el modal
 };
          
   const fetchHistory = async (exercise) => {
@@ -473,15 +480,26 @@ const manejarCambio = (evento) => {
             </button> */}
 
           {exerciseGif && (
-            <>
-              <h2>{exerciseGif.name}</h2>
+  <>
+    <h2>{exerciseGif.name}</h2>
 
-              <img
-                src={`/ejercicios/${exerciseGif.name}.gif`}
-                alt={exerciseGif.name}
-                />
-            </>
-          )}
+    {/* Si la imagen NO ha cargado, mostramos el Spinner */}
+    {!imgCargada && (
+      <div className="spinner-contenedor">
+        <div className="spinner-visual"></div>
+        <p>Cargando ejercicio...</p>
+      </div>
+    )}
+
+    {/* La imagen siempre se procesa, pero la controlamos con CSS mediante la clase */}
+    <img
+      src={`/ejercicios/${exerciseGif.name}.gif`}
+      alt={exerciseGif.name}
+      onLoad={() => setImgCargada(true)} /* <- CUANDO CARGA, CAMBIA EL ESTADO */
+      className={`img-modal-gif ${imgCargada ? 'visible' : 'oculta'}`}
+    />
+  </>
+)}
           </div>
         </div>
     </div>

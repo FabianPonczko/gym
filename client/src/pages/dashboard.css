@@ -249,6 +249,7 @@ select, button {
   width: 100%;
 
   border-radius: 10px;
+
 }
 .gif-overlay {
 
@@ -319,6 +320,7 @@ select, button {
   object-fit: contain;
 
   border-radius: 10px;
+
 }
 
 .gif-close {
@@ -378,6 +380,56 @@ select, button {
      box-shadow: 0 6px 8px -4px rgba(90, 90, 90, 0.267);
   }
 }
+
+/* Contenedor del spinner centrado */
+.spinner-contenedor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+/* El círculo del spinner animado con CSS puro */
+.spinner-visual {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #007bff; /* Color azul del spinner (cámbialo si quieres) */
+  border-radius: 50%;
+  animation: girarSpinner 0.8s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes girarSpinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===================================================
+   CONTROL DE LA IMAGEN PARA EVITAR PARPADEOS
+   =================================================== */
+
+/* Mientras carga, la imagen ocupa espacio pero no se ve */
+.img-modal-gif.oculta {
+  opacity: 0;
+  height: 0; /* Evita saltos raros de tamaño en el modal */
+  overflow: hidden;
+}
+
+/* Cuando carga por completo, aparece suavemente */
+.img-modal-gif.visible {
+  opacity: 1;
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 10px;
+  display: block;
+  transition: opacity 0.4s ease-in-out; /* Desvanecido suave */
+}
+
+
 @media (max-width: 768px) {
 
   .menu-admin-btn {
