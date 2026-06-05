@@ -332,11 +332,15 @@ const manejarCambio = (evento) => {
                       const ex = item.exercise || item;
                       return (
                         <div className="cardDashboard" key={i}
-                        onClick={()=>abrirGif(ex)}
+                        
                         >
                           <span>Ejercicio {i+1}</span>
-                          <h3>{ex.name}</h3>
-                          <div className="cardDashboard" key={i}>
+                          <h3 
+                            style={{padding:"10px"}}
+                            onClick={()=>abrirGif(ex)}
+                          >{ex.name}</h3>
+
+                          {/* <div className="cardDashboard" key={i}> */}
 
                           {/* <img
                             src={`/ejercicios/${ex.name}.gif`}
@@ -347,7 +351,7 @@ const manejarCambio = (evento) => {
 
                           {/* <h3>{ex.name}</h3> */}
 
-                        </div>
+                        {/* </div> */}
                           <p>{item.sets} Series x {item.reps} Rep {item.weight || null} {item.weight ? "kg" : null}</p>
                           
                           <div className="buttons-container">

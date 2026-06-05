@@ -19,11 +19,11 @@ export default function WeightModal({ exercise, onClose, onSave }) {
 
  return (
 
-  <div className="modal-overlayPeso">
+  <div className="modal-overlayPeso" style={{zIndex:1000}}>
 
-    <div className="modalPeso">
+    <div className="modalPeso" style={{background:"white"}}>
 
-      <h2>{exercise}:</h2>
+      <h2 style={{color:"rgb(53, 53, 48)",fontSize:"24px"}}>{exercise}:</h2>
 
       <form
         onSubmit={(e) => {
@@ -34,7 +34,7 @@ export default function WeightModal({ exercise, onClose, onSave }) {
         }}
       >
 
-        <input
+        <input style={{color:"gray",fontFamily:"cursive",fontWeight:"bold"}}
           autoFocus
           type="number"
           placeholder="Peso"
@@ -44,8 +44,7 @@ export default function WeightModal({ exercise, onClose, onSave }) {
           }
         />
 
-        <input
-        au
+        <input style={{color:"gray",fontFamily:"cursive",fontWeight:"bold"}}
           type="number"
           placeholder="Reps"
           value={reps}
