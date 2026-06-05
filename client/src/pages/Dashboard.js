@@ -89,6 +89,18 @@ export default function Dashboard() {
    
     
   }, []);
+
+  useEffect(()=>{
+    
+    if (!exerciseGif) return;
+
+    const temporizador = setTimeout(() => {
+      setExerciseGif(null)
+    }, 8000);
+    
+    return () => clearTimeout(temporizador);
+
+  },[exerciseGif])
   
   const sinRutina = (msg) =>{
               Swal.fire({
