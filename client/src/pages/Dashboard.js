@@ -304,27 +304,31 @@ const manejarCambio = (evento) => {
 
               return (
                 <div className="day-card" key={dayIndex}>
-                  <h2>{day.day}</h2>
+                  <h2 className="dayTitle">
+                    {day.day}
+                  </h2>
                   
                   <div className="grid">
                     {day.exercises.map((item, i) => {
                       const ex = item.exercise || item;
                       return (
-                        <div className="cardDashboard" key={i}>
+                        <div className="cardDashboard" key={i}
+                        onClick={()=>abrirGif(ex)}
+                        >
                           <span>Ejercicio {i+1}</span>
                           <h3>{ex.name}</h3>
                           <div className="cardDashboard" key={i}>
 
-  <img
-    src={`/ejercicios/${ex.name}.gif`}
-    alt={ex.name}
-    className="exercise-thumb"
-    onClick={() => abrirGif(ex)}
-  />
+                          {/* <img
+                            src={`/ejercicios/${ex.name}.gif`}
+                            alt={ex.name}
+                            className="exercise-thumb"
+                            onClick={() => abrirGif(ex)}
+                            /> */}
 
-  {/* <h3>{ex.name}</h3> */}
+                          {/* <h3>{ex.name}</h3> */}
 
-</div>
+                        </div>
                           <p>{item.sets} Series x {item.reps} Rep {item.weight || null} {item.weight ? "kg" : null}</p>
                           
                           <div className="buttons-container">
@@ -441,31 +445,33 @@ const manejarCambio = (evento) => {
           onSave={guardarPeso}
         />
       )}
-  {exerciseGif && (
-  <div
-    className="gif-overlay"
-    onClick={() => setExerciseGif(null)}
-  >
-    <div
-      className="gif-modal"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <button
-        className="gif-close"
-        onClick={() => setExerciseGif(null)}
-      >
-        ✕
-      </button>
+        <div
+          className={`gif-overlay ${exerciseGif ? 'show' : ''}`}
+          onClick={() => setExerciseGif(null)}
+          >
+          <div
+            className="gif-modal"
+            onClick={(e) =>( e.stopPropagation(),setExerciseGif(null))}
+            >
+            {/* <button
+              className="gif-close"
+              onClick={() => setExerciseGif(null)}
+              >
+              ✕
+            </button> */}
 
-      <h2>{exerciseGif.name}</h2>
+          {exerciseGif && (
+            <>
+              <h2>{exerciseGif.name}</h2>
 
-      <img
-        src={`/ejercicios/${exerciseGif.name}.gif`}
-        alt={exerciseGif.name}
-      />
-    </div>
-  </div>
-)}
+              <img
+                src={`/ejercicios/${exerciseGif.name}.gif`}
+                alt={exerciseGif.name}
+                />
+            </>
+          )}
+          </div>
+        </div>
     </div>
   </Layout>
 );

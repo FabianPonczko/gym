@@ -265,6 +265,13 @@ select, button {
   align-items: center;
 
   z-index: 99999;
+
+  /* Estado inicial oculto */
+  opacity: 0;
+  pointer-events: none;
+  /* Transición lenta para el desvanecido de fondo */
+  transition: opacity 0.7s ease-in-out; 
+   
 }
 .gif-modal {
 
@@ -283,7 +290,25 @@ select, button {
   text-align: center;
 
   box-shadow: 0 0 30px rgba(0,0,0,.5);
+
+   /* Estado inicial del zoom out */
+  transform: scale(0.7); 
+  /* Transición lenta para el efecto zoom */
+  transition: transform 0.6s ease-out; 
+ 
 }
+
+/* El fondo negro se desvanece suavemente a visible */
+.gif-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* El modal interno escala de 0.7 a 1 lentamente al mismo tiempo */
+.gif-overlay.show .gif-modal {
+  transform: scale(1);
+}
+
 
 .gif-modal img {
 
@@ -315,6 +340,43 @@ select, button {
   cursor: pointer;
 
   font-size: 20px;
+
+  /* TRUCO: La X solo se vuelve visible cuando el modal tiene la clase .show */
+
+  opacity: 0;
+  pointer-events: auto;
+
+  
+}
+.dayTitle{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 75px;
+  width: 100%;  
+  position: -webkit-sticky; /* Soporte para navegadores Safari antiguos */
+  position: sticky;         /* Vuelve el elemento "pegajoso" */
+  top: 0;                   /* Define la distancia exacta donde se detendrá arriba */
+  background-color:#0f172a;   /* Importante: evita que el texto de abajo se traslape de forma transparente */
+  box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+  z-index: 100;     
+  /* 2. Vinculamos el cambio al movimiento del scroll */
+  animation: volverTransparente linear both;
+  animation-timeline: scroll(root); /* Detecta el scroll de la página completa */
+  animation-range: 0px 150px;       /* El cambio ocurre en los primeros 150px de scroll */
+}
+/* 3. Definimos los estados de la animación */
+@keyframes volverTransparente {
+  from {
+    background-color: #0f172a; /* Sólido al inicio */
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  to {
+    background-color: #0f172aa8 ; /* Transparente al bajar */
+    backdrop-filter: blur(5px); /* Opcional: efecto borroso tipo iPhone */
+     /* Nueva sombra suave abajo del título cuando se scrolea */
+     box-shadow: 0 6px 8px -4px rgba(90, 90, 90, 0.267);
+  }
 }
 @media (max-width: 768px) {
 
