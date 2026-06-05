@@ -19,6 +19,7 @@ const seedExercises = async () => {
       { name: "Cruces de Polea", group: "chest" },
       { name: "Aperturas", group: "chest" },
 
+      
       // 🟦 ESPALDA
       { name: "Dominadas", group: "back" },
       { name: "Remo Barra", group: "back" },
