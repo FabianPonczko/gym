@@ -20,7 +20,7 @@ export default function Dashboard() {
   const [showHistory, setShowHistory] = useState({});
   const [verGif,setVerGif] = useState(false)
   const executed = useRef(false);
-  
+  const [exerciseGif, setExerciseGif] = useState(null);
 
    const fetchRoutine = async () => {
       setLoading(true)
@@ -108,7 +108,9 @@ export default function Dashboard() {
     setSelectedExercise(exercise);
   };
 
-  
+  const abrirGif = (exercise) => {
+  setExerciseGif(exercise);
+};
          
   const fetchHistory = async (exercise) => {
 
@@ -303,11 +305,7 @@ const manejarCambio = (evento) => {
               return (
                 <div className="day-card" key={dayIndex}>
                   <h2>{day.day}</h2>
-                   <input 
-                    type="checkbox" 
-                    checked={verGif} 
-                    onChange={manejarCambio} 
-                  />
+                  
                   <div className="grid">
                     {day.exercises.map((item, i) => {
                       const ex = item.exercise || item;
@@ -315,12 +313,18 @@ const manejarCambio = (evento) => {
                         <div className="cardDashboard" key={i}>
                           <span>Ejercicio {i+1}</span>
                           <h3>{ex.name}</h3>
-                          <img hidden = {!verGif?true:false}
-                            src={`/ejercicios/${ex.name}.gif`}
+                          <div className="cardDashboard" key={i}>
 
-                            alt={ex.name} 
-                            className="exercise-img" 
-                          />
+  <img
+    src={`/ejercicios/${ex.name}.gif`}
+    alt={ex.name}
+    className="exercise-thumb"
+    onClick={() => abrirGif(ex)}
+  />
+
+  {/* <h3>{ex.name}</h3> */}
+
+</div>
                           <p>{item.sets} Series x {item.reps} Rep {item.weight || null} {item.weight ? "kg" : null}</p>
                           
                           <div className="buttons-container">
@@ -437,6 +441,31 @@ const manejarCambio = (evento) => {
           onSave={guardarPeso}
         />
       )}
+  {exerciseGif && (
+  <div
+    className="gif-overlay"
+    onClick={() => setExerciseGif(null)}
+  >
+    <div
+      className="gif-modal"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        className="gif-close"
+        onClick={() => setExerciseGif(null)}
+      >
+        ✕
+      </button>
+
+      <h2>{exerciseGif.name}</h2>
+
+      <img
+        src={`/ejercicios/${exerciseGif.name}.gif`}
+        alt={exerciseGif.name}
+      />
+    </div>
+  </div>
+)}
     </div>
   </Layout>
 );
