@@ -99,7 +99,7 @@ export default function Dashboard() {
 
     const temporizador = setTimeout(() => {
       setExerciseGif(null)
-    }, 8000);
+    }, 6000);
     
     return () => clearTimeout(temporizador);
 
@@ -130,7 +130,15 @@ const abrirGif = (ex) => {
   setImgCargada(false); // Reinicia el estado de carga
   setExerciseGif(ex);   // Abre el modal
 };
-         
+
+const irAlPrincipio = () => {
+  window.scrollTo({
+    top: 0,             // Sube hasta el píxel cero (el inicio)
+    behavior: 'smooth'  // Hace que el movimiento sea suave, no un salto brusco
+  });
+};
+
+
   const fetchHistory = async (exercise) => {
 
   setCargando(prev => ({
@@ -323,7 +331,8 @@ const manejarCambio = (evento) => {
 
               return (
                 <div className="day-card" key={dayIndex}>
-                  <h2 className="dayTitle">
+                  <h2 className="dayTitle"
+                  onClick={irAlPrincipio}>
                     {day.day}
                   </h2>
                   
