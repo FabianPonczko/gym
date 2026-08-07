@@ -657,6 +657,7 @@ const deleteRoutine = async (id) => {
             <div className="name">{u.name}</div>
             <div className="email">{u.email}</div>
           </div>
+            <div style={{background:"rgba(51, 68, 85, 0.36)",marginLeft:5,padding:10,borderRadius:5}}>{u.goal}</div>
         </div>
 
         <div className="user-info">

@@ -428,7 +428,12 @@ const manejarCambio = (evento) => {
                                 style={{
                                   border:
                                     "solid 1px rgba(98, 89, 89, 0.13)",
-                                  textAlign: "center"
+                                  textAlign: "center",
+                                  width:"80%",
+                                  paddingInline:50,
+                                  background:"rgba(147, 147, 140, 0.33)",
+                                  borderRadius:5,
+                                  marginBlock:5                                  
                                 }}
                               >
                                 <p>
