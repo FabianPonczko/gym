@@ -15,27 +15,42 @@ const app = express();
 
 // Lista de orígenes permitidos
 const allowedOrigins = [
-  "https://vercel.app", // Producción
-  "http://localhost:3000",                // React / Next.js local (ajusta el puerto si usas otro como 5173 para Vite)
-  "http://localhost:5173"                 // Por si usas Vite en el frontend
+  "https://gym-client-mauve.vercel.app",  // URL real de tu frontend en producción
+  "http://localhost:3000",                // React / Next.js local
+  "http://localhost:5173"                 // Vite local
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Permitir peticiones sin origen (como herramientas de Postman o peticiones del mismo servidor)
+      // Permitir peticiones sin origen (como Postman o Server-to-Server)
       if (!origin) return callback(null, true);
       
       if (allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        callback(new Error("Bloqueado por políticas de CORS"));
+        // Es mejor pasar el error al callback sin romper drásticamente el proceso interno
+        callback(null, false); 
       }
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"], // Añade esto para permitir tokens en el login
     credentials: true,
   })
 );
+
+// Asegúrate de pasar la misma configuración exacta al método options
+app.options("*", cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
+  credentials: true
+}));
+
 // Mantén esta línea justo debajo
 app.options("*", cors());
 
