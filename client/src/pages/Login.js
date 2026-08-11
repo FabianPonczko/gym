@@ -32,13 +32,12 @@ export default function Login() {
     
     try {
       setLoading(true)
-
+      
       const res = await api.post("/auth/login", {
       name,
       password
 
     });
-    console.log("res: ",res)
     localStorage.setItem("token", res.data.token);
 
     // 🔥 traer usuario real desde DB

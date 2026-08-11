@@ -65,4 +65,7 @@ mongoose.connect(process.env.MONGO_URI)
   })
   .catch(err => console.log(err));
   
-  
+  // ... Todo tu código de rutas y mongoose
+
+// LÍNEA OBLIGATORIA AL FINAL DEL ARCHIVO:
+export default app;
