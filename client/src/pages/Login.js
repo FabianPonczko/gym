@@ -38,7 +38,7 @@ export default function Login() {
       password
 
     });
-
+    console.log("res: ",res)
     localStorage.setItem("token", res.data.token);
 
     // 🔥 traer usuario real desde DB
