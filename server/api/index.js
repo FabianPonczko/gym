@@ -33,23 +33,18 @@ app.use(
         callback(null, false); 
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"], // Añade esto para permitir tokens en el login
-    credentials: true,
+     credentials: true,
+    optionsSuccessStatus: 204
   })
 );
 
-// Asegúrate de pasar la misma configuración exacta al método options
-app.options("*", cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(null, false);
-    }
-  },
-  credentials: true
-}));
+app.options("*", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://gym-client-mauve.vercel.app");
+  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS,PATCH,DELETE,POST,PUT");
+  res.setHeader("Access-Control-Allow-Headers", "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  return res.sendStatus(204);
+});
 
 // Mantén esta línea justo debajo
 app.options("*", cors());
