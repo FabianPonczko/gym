@@ -13,40 +13,31 @@ dotenv.config();
 
 const app = express();
 
-// Lista de orígenes permitidos
+// 1. Lista de orígenes permitidos
 const allowedOrigins = [
-  "https://gym-client-mauve.vercel.app",  // URL real de tu frontend en producción
-  "http://localhost:3000",                // React / Next.js local
-  "http://localhost:5173"                 // Vite local
+  "https://gym-client-mauve.vercel.app",  
+  "http://localhost:3000",                
+  "http://localhost:5173"                 
 ];
 
+// 2. Configuración limpia de CORS (Express maneja OPTIONS automáticamente aquí)
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Permitir peticiones sin origen (como Postman o Server-to-Server)
       if (!origin) return callback(null, true);
       
-      if (allowedOrigins.indexOf(origin) !== -1) {
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        // Es mejor pasar el error al callback sin romper drásticamente el proceso interno
-        callback(null, false); 
+        callback(new Error("No permitido por CORS")); 
       }
     },
-     credentials: true,
-    optionsSuccessStatus: 200
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["X-CSRF-Token", "X-Requested-With", "Accept", "Accept-Version", "Content-Length", "Content-MD5", "Content-Type", "Date", "X-Api-Version", "Authorization"],
+    credentials: true,
+    optionsSuccessStatus: 200 // Responde con HTTP 200 OK a las peticiones preflight del navegador
   })
 );
-
-app.options(".*", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://gym-client-mauve.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS,PATCH,DELETE,POST,PUT");
-  res.setHeader("Access-Control-Allow-Headers", "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  return res.sendStatus(204);
-});
-
-
 
 app.use(express.json());
 
