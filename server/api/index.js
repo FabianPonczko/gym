@@ -34,7 +34,7 @@ app.use(
       }
     },
      credentials: true,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 200
   })
 );
 
@@ -46,8 +46,7 @@ app.options("*", (req, res) => {
   return res.sendStatus(204);
 });
 
-// Mantén esta línea justo debajo
-app.options("*", cors());
+
 
 app.use(express.json());
 
