@@ -63,15 +63,22 @@ app.use(express.json());
 // Middleware para conectar a MongoDB de forma eficiente en Serverless
 let isConnected = false;
 async function connectDB() {
-  if (isConnected) return;
+  if (isConnected && mongoose.connection.readyState === 1) return;
   
   try {
     if (!process.env.MONGO_URI) {
       throw new Error("Falta la variable de entorno MONGO_URI en Vercel");
     }
-    await mongoose.connect(process.env.MONGO_URI);
+    
+    // Configuraciones recomendadas para Serverless
+    mongoose.set('bufferCommands', false); // 👈 Desactiva el buffering global para evitar colas infinitas
+    
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000, // 👈 Si la DB no responde en 5s, corta rápido en vez de colgar la función
+    });
+    
     isConnected = true;
-    console.log("Mongo conectado exitosamente 🍃");
+    console.log("Mongo conectado");
   } catch (error) {
     console.error("Error al conectar a Mongo:", error);
     throw error;
