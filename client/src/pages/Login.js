@@ -86,7 +86,7 @@ export default function Login() {
           className={error ? "input error" : "input"}
           />
 
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="error-text">{error.message || "Ocurrió un error inesperado."}</p>}
 
         <button disabled={loading}>
           {loading ? "Entrando..." : "Ingresar"}
