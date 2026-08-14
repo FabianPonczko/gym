@@ -78,11 +78,11 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth.js";
-import routineRoutes from "./routes/routines.js";
-import progressRoutes from "./routes/progress.js";
-import userRoutes  from "./routes/users.js";
-import exerciseRoutes from "./routes/exerciseRoutes.js";
+import authRoutes from "../routes/auth.js";
+import routineRoutes from "../routes/routines.js";
+import progressRoutes from "../routes/progress.js";
+import userRoutes  from "../routes/users.js";
+import exerciseRoutes from "../routes/exerciseRoutes.js";
 
 dotenv.config();
 
