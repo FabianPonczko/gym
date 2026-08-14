@@ -4,29 +4,44 @@ import api from "../pages/services/api";
 import { useEffect, useEffectEvent , useState} from "react";
 
 export default function Sidebar() {
+  
   const [usuario,setUsuario] = useState(null)
+  const [user, setUser] = useState(null);
   
-  let user = null;
-  
-  let usuarioLogin
-  
-  const userName = async () => {
+  // 1. Obtener los datos del token solo una vez al montar
+  useEffect(() => {
     try {
-       usuarioLogin = await api.get("users/me")
+      const token = localStorage.getItem("token");
+      if (token) {
+        const decoded = JSON.parse(atob(token.split(".")[1]));
+        setUser(decoded);
+      }
     } catch (error) {
-      console.log("error",error)
-    }finally{
-      console.log("mando ",usuarioLogin?.data?.name)
-      setUsuario(usuarioLogin?.data?.name)
+      console.error("Error al decodificar token", error);
     }
-  }
-
-  try {
-    const token = localStorage.getItem("token");
-    if (token) user = JSON.parse(atob(token.split(".")[1]));
-  } catch {}
+  }, []);
   
-  !usuario && userName()
+  // 2. Hacer la petición a la API de forma controlada una sola vez
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const response = await api.get("users/me");
+        setUsuario(response.data?.name);
+      } catch (error) {
+        console.error("Error al obtener usuario:", error);
+      }
+    };
+
+    fetchUserName();
+  }, []); // El array vacío asegura que solo se ejecute al cargar el componente
+
+
+  // try {
+  //   const token = localStorage.getItem("token");
+  //   if (token) user = JSON.parse(atob(token.split(".")[1]));
+  // } catch {}
+  
+  // !usuario && userName()
 
   return (
     // <div className="sidebar">
