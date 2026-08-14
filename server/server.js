@@ -74,7 +74,7 @@ async function connectDB() {
     mongoose.set('bufferCommands', false); // 👈 Desactiva el buffering global para evitar colas infinitas
     
     await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000, // 👈 Si la DB no responde en 5s, corta rápido en vez de colgar la función
+      serverSelectionTimeoutMS: 7000, // 👈 Si la DB no responde en 5s, corta rápido en vez de colgar la función
     });
     
     isConnected = true;

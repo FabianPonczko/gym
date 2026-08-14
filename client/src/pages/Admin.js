@@ -213,6 +213,7 @@ const removeExercise = (dayIndex, exIndex) => {
     fetchExercises();
     
   }, []);
+  
   useEffect(() => {
 
   if (openAdmin) {
@@ -730,7 +731,8 @@ const deleteRoutine = async (id) => {
                   <div className="day-card" style={{background: dayIndex % 2==0?"#114ab415":"#57498a3f",marginBottom:"15px"}} key={dayIndex}>
 
                     <div className="day-header">
-                      <h3>{day.day}</h3>
+                      {console.log(day.day)}
+                      <h3>{day.day}-{dayIndex}</h3>
                       {day.day !== "Día 1" &&(
                         <button onClick={() => removeDay(dayIndex)}>
                         ❌
